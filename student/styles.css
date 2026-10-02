@@ -272,9 +272,9 @@ input { font: inherit; color: inherit; }
 .collapse.is-closed .collapse-head img { transform: rotate(-90deg); }
 .collapse.is-closed .collapse-body { display: none; }
 .collapse-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.check { display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; }
+.check { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; white-space: normal; overflow-wrap: anywhere; }
 .check input { position: absolute; opacity: 0; pointer-events: none; }
-.check .box { width: 16px; height: 16px; flex: none; border-radius: 2px; background: var(--stone-1); border: 1px solid var(--stone-5); }
+.check .box { width: 16px; height: 16px; flex: none; margin-top: 4px; border-radius: 2px; background: var(--stone-1); border: 1px solid var(--stone-5); }
 .check input:checked + .box { background: url(assets/icon-checkbox-checked.svg) center / 16px 16px no-repeat; border-color: transparent; }
 .check input:focus-visible + .box { outline: 2px solid var(--primary-6); outline-offset: 2px; }
 .check:hover .box { border-color: var(--primary-6); }
