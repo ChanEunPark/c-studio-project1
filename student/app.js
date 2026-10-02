@@ -68,9 +68,9 @@
 
   const COLORS = ["blue", "magenta", "mustard", "green"];
   const initialPlan = () => [
-    { id: "51-701", color: "blue", status: "confirmed" },
+    { id: "51-701", color: "mustard", status: "confirmed" },
     { id: "51-725", color: "magenta", status: "confirmed" },
-    { id: "51-729", color: "mustard", status: "confirmed" },
+    { id: "51-729", color: "blue", status: "confirmed" },
     { id: "51-711", color: "green", status: "confirmed" },
   ];
   const plans = [
@@ -100,7 +100,8 @@
   }
 
   // ---------- Course cards ----------
-  let selectedId = null;      // course open in Course Details
+  let selectedId = null;      // course open in Course Details (from the lists)
+  let calendarId = null;      // course open from the calendar (Register / Delete)
   const compareSel = [];      // up to 2 course ids in Compare
   let activeTab = "search";
 
@@ -147,8 +148,9 @@
   }
   function matchesQuery(c, q) {
     if (!q) return true;
-    const hay = [c.id, c.title, c.instructor, c.room, c.dept, c.description, ...c.tags].join(" ").toLowerCase();
-    return q.toLowerCase().split(/\s+/).every((w) => hay.includes(w));
+    const ql = q.toLowerCase();
+    return [c.id, c.title, c.instructor].some((f) => f.toLowerCase().includes(ql))
+      || (ql === "mdes" && c.level === "Graduate" && c.dept === "Design");
   }
   const results = (q, f) => catalog.filter((c) => matchesQuery(c, q) && matchesFilters(c, f));
 
@@ -157,12 +159,8 @@
     $("#filterDot").hidden = !filtersActive(filters);
     if (query || filtersActive(filters)) {
       const found = results(query, filters);
-      const title = query ? `Results for “${esc(query)}”` : "Filtered results";
-      box.innerHTML = `<section class="list-section">
-        <div class="list-title-row"><p class="h4">${title}</p><button class="list-clear" id="clearSearch">Clear</button></div>
-        <p class="mono-sm">${found.length} course${found.length === 1 ? "" : "s"}</p>
-        <div class="course-list">${found.map((c) => cardHTML(c, { selected: c.id === selectedId })).join("") || `<p class="list-empty">No courses match. Try another search or fewer filters.</p>`}</div>
-      </section>`;
+      box.innerHTML = `<div class="course-list results">${found.map((c) => cardHTML(c, { selected: c.id === selectedId })).join("")
+        || `<p class="list-empty">No courses match. Try another search or fewer filters.</p>`}</div>`;
       return;
     }
     box.innerHTML = Object.entries(lists).map(([key, l]) => {
@@ -212,7 +210,10 @@
     renderSearchLists();
   }
   input.addEventListener("focus", renderDrop);
-  input.addEventListener("input", renderDrop);
+  input.addEventListener("input", () => {
+    renderDrop();
+    if (!input.value.trim() && query) { query = ""; renderSearchLists(); }
+  });
   input.addEventListener("keydown", (e) => {
     const opts = $$("button", drop);
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -273,16 +274,22 @@
       return;
     }
     selectedId = selectedId === id ? null : id;
+    if (selectedId) closeCalendarDetails();
     renderLists(); renderDetails();
   }
 
   // ---------- Course details & compare ----------
-  function detailCardHTML(c) {
+  function detailCardHTML(c, { fromCalendar = false } = {}) {
     const isSaved = saved.has(c.id);
     const item = inPlan(c.id);
-    const planBtn = item
-      ? `<button class="btn btn-lg btn-secondary blue plan-btn" data-plan-remove="${c.id}">Remove from plan</button>`
-      : `<button class="btn btn-lg btn-primary plan-btn" data-plan-add="${c.id}">Add to plan</button>`;
+    const planBtn = fromCalendar && item
+      ? `${item.registered
+          ? `<button class="btn btn-lg btn-primary plan-btn" disabled>Registered</button>`
+          : `<button class="btn btn-lg btn-primary plan-btn" data-register="${c.id}">Register</button>`}
+         <button class="btn btn-lg btn-secondary plan-btn" data-plan-delete="${c.id}">Delete</button>`
+      : item
+        ? `<button class="btn btn-lg btn-secondary blue plan-btn" data-plan-remove="${c.id}">Remove from plan</button>`
+        : `<button class="btn btn-lg btn-primary plan-btn" data-plan-add="${c.id}">Add to plan</button>`;
     return `<div class="detail-card">
       <div class="detail-scroll">
       <div class="detail-top">
@@ -314,6 +321,16 @@
     panel.hidden = !show;
     if (show) $("#detailsBody").innerHTML = detailCardHTML(byId[selectedId]);
   }
+  function renderCalendarDetails() {
+    const panel = $("#calDetails");
+    const show = calendarId && inPlan(calendarId);
+    if (!show) calendarId = null;
+    panel.hidden = !show;
+    if (show) $("#calDetailsBody").innerHTML = detailCardHTML(byId[calendarId], { fromCalendar: true });
+  }
+  function closeCalendarDetails() { calendarId = null; renderCalendarDetails(); }
+  $("#closeCalDetails").addEventListener("click", closeCalendarDetails);
+
   function renderCompare() {
     const box = $("#compare");
     const show = activeTab === "compare" && compareSel.length > 0;
@@ -331,6 +348,10 @@
     if (add) return addToPlan(add.dataset.planAdd);
     const rm = e.target.closest("[data-plan-remove]");
     if (rm) return removeFromPlan(rm.dataset.planRemove);
+    const reg = e.target.closest("[data-register]");
+    if (reg) return register(reg.dataset.register);
+    const del = e.target.closest("[data-plan-delete]");
+    if (del) { const id = del.dataset.planDelete; closeCalendarDetails(); return removeFromPlan(id); }
     const syl = e.target.closest("[data-syllabus]");
     if (syl) return downloadSyllabus(byId[syl.dataset.syllabus]);
   });
@@ -360,13 +381,20 @@
     if (inPlan(id)) return;
     const clash = plan().items.map((i) => byId[i.id]).find((o) => overlaps(o, c));
     plan().items.push({ id, color: nextColor(), status: "tentative" });
-    renderPlan(); renderDetails(); renderCompare();
+    renderPlan(); renderDetails(); renderCompare(); renderCalendarDetails();
     toast(clash ? `Added to ${plan().name}. It overlaps with ${clash.title}.` : `Added to ${plan().name}. Click Confirm to finish.`);
   }
   function removeFromPlan(id) {
     plan().items = plan().items.filter((i) => i.id !== id);
     renderPlan(); renderDetails(); renderCompare();
     toast(`Removed from ${plan().name}.`);
+  }
+  function register(id) {
+    const item = inPlan(id); if (!item) return;
+    item.status = "confirmed";
+    item.registered = true;
+    renderPlan(); renderCalendarDetails(); renderDetails(); renderCompare();
+    toast(`You're registered for ${byId[id].title}.`);
   }
   $("#confirmBtn").addEventListener("click", () => {
     const pending = plan().items.filter((i) => i.status === "tentative");
@@ -430,7 +458,7 @@
   }
   $("#planTabs").addEventListener("click", (e) => {
     const t = e.target.closest("[data-plan]"); if (!t) return;
-    activePlan = +t.dataset.plan; renderPlan(); renderDetails(); renderCompare();
+    activePlan = +t.dataset.plan; renderPlan(); renderDetails(); renderCompare(); renderCalendarDetails();
   });
   $("#addPageBtn").addEventListener("click", () => {
     plans.push({ name: `Plan ${plans.length + 1}`, items: [] });
@@ -440,8 +468,9 @@
   });
   $("#ttEvents").addEventListener("click", (e) => {
     const s = e.target.closest("[data-slot]"); if (!s) return;
+    selectedId = null; renderLists(); renderDetails();
     if (activeTab === "compare") switchTab("search");
-    selectedId = s.dataset.slot; renderLists(); renderDetails();
+    calendarId = s.dataset.slot; renderCalendarDetails();
   });
   // Scroll so 7 am – 5 pm is visible, like the design
   $("#ttScroll").scrollTop = 0;
@@ -456,6 +485,7 @@
   // ---------- Tabs ----------
   function switchTab(tab) {
     activeTab = tab;
+    if (tab === "compare") calendarId = null, $("#calDetails").hidden = true;
     $$(".side-tabs .tab").forEach((t) => t.classList.toggle("is-active", t.dataset.tab === tab));
     $$(".tab-panel").forEach((p) => (p.hidden = p.dataset.panel !== tab));
     renderLists(); renderDetails(); renderCompare();
@@ -587,6 +617,7 @@
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     if (!$("#filters").hidden) return closeFilters();
+    if (calendarId) return closeCalendarDetails();
     if (selectedId) { selectedId = null; renderLists(); renderDetails(); }
   });
 

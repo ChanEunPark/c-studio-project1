@@ -18,7 +18,7 @@
 
   --blue-6: #104eaa;    --blue-8: #102f76;
   --magenta-6: #be1563; --magenta-8: #7a0035;
-  --mustard-6: #b59c1a; --mustard-8: #635800;
+  --mustard-6: #eab934; --mustard-8: #a76e11;
   --green-6: #1b6f3e;   --green-8: #004728;
 
   --text-85: rgba(11, 11, 11, 0.85);
@@ -87,7 +87,7 @@ input { font: inherit; color: inherit; }
 }
 
 /* ---------- Layout ---------- */
-.layout { position: relative; display: flex; gap: 16px; align-items: flex-start; margin-left: 94px; width: 1316px; }
+.layout { position: relative; display: flex; gap: 16px; align-items: flex-start; margin-left: 32px; width: 1316px; }
 .side { flex: 0 0 400px; padding: 24px 0; }
 .side-card { background: var(--stone-4); border: 1px solid var(--stone-7); border-radius: 8px; padding: 24px 0; }
 .side-tabs { padding: 0 16px; }
@@ -206,13 +206,13 @@ input { font: inherit; color: inherit; }
   display: flex; flex-direction: column; gap: 10px;
 }
 .overlay-panel {
-  position: fixed; z-index: 20; left: 497px; top: 24px; width: 600px; height: min(900px, calc(100vh - 48px));
+  position: fixed; z-index: 20; left: 447px; top: 24px; width: 600px; height: min(1032px, calc(100vh - 48px));
   border-radius: 8px; box-shadow: var(--shadow-panel);
 }
 .panel-head { display: flex; align-items: flex-start; gap: 10px; padding-top: 8px; }
 .panel-head .h4 { flex: 1; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .compare {
-  position: fixed; z-index: 20; left: 497px; top: 24px; width: min(1200px, calc(100vw - 521px)); height: min(900px, calc(100vh - 48px));
+  position: fixed; z-index: 20; left: 447px; top: 24px; width: min(1200px, calc(100vw - 471px)); height: min(1032px, calc(100vh - 48px));
   display: flex; border-radius: 8px; box-shadow: var(--shadow-panel);
 }
 .compare-panel { flex: 1 1 0; min-width: 0; }
@@ -226,7 +226,7 @@ input { font: inherit; color: inherit; }
   background: var(--stone-2); border: 1px solid var(--neutral-7); border-radius: 8px;
 }
 .detail-scroll { flex: 1; min-height: 0; overflow-y: auto; }
-.detail-foot { flex: none; display: flex; justify-content: center; padding: 16px; background: var(--stone-1); }
+.detail-foot { flex: none; display: flex; justify-content: center; gap: 10px; padding: 16px; background: var(--stone-1); border-top: 1px solid var(--stone-7); }
 .detail-foot .plan-btn { width: 300px; }
 .detail-top { padding: 8px 16px 12px; }
 .detail-title { font-weight: 500; font-size: 20px; line-height: 28px; margin-bottom: 8px; }
@@ -290,6 +290,10 @@ input { font: inherit; color: inherit; }
   background: var(--stone-1); box-shadow: 0 2px 8px rgba(0, 0, 0, .15); font-weight: 500; white-space: nowrap;
 }
 
-#detailsBody { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.details-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+/* Opened from the calendar: right side, Register / Delete */
+.overlay-panel.cal-details { left: min(896px, calc(100vw - 824px)); width: 800px; box-shadow: none; }
+.results { padding-bottom: 32px; }
 a.btn { text-decoration: none; }
 .collapse-body { overflow: hidden; }
+.detail-sections > div { max-width: 532px; }
