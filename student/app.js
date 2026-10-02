@@ -333,6 +333,7 @@
     panel.classList.toggle("is-open", show);
     panel.setAttribute("aria-hidden", String(!show));
     panel.inert = !show;
+    renderPlan();
   }
   function closeCalendarDetails() { calendarId = null; renderCalendarDetails(); }
   $("#closeCalDetails").addEventListener("click", closeCalendarDetails);
@@ -453,9 +454,10 @@
       const n = e.cols || 1, k = e.col || 0;
       const left = `calc(${e.d * 20}% + ${k} * (20% - 8px) / ${n})`;
       const width = `calc((20% - 8px) / ${n} - ${n > 1 ? 2 : 0}px)`;
-      const cls = ["slot", e.kind === "confirmed" ? e.color : "hatched", height < 100 ? "short" : "", e.kind === "preview" ? "preview" : ""].join(" ");
+      const selected = e.kind !== "preview" && e.c.id === calendarId;
+      const cls = ["slot", e.kind === "confirmed" ? e.color : "hatched", height < 100 ? "short" : "", e.kind === "preview" ? "preview" : "", selected ? "is-selected" : ""].join(" ");
       const label = e.kind === "tentative" ? `${e.c.title} (not confirmed)` : e.c.title;
-      return `<button class="${cls}" style="top:${top}px;height:${height}px;left:${left};width:${width}" data-slot="${e.c.id}" aria-label="${esc(label)}, ${DAY_NAMES[e.d]} ${timeRange(e.c, " - ")}">
+      return `<button class="${cls}" style="top:${top}px;height:${height}px;left:${left};width:${width}" data-slot="${e.c.id}" aria-pressed="${selected}" aria-label="${esc(label)}, ${DAY_NAMES[e.d]} ${timeRange(e.c, " - ")}">
         <span class="slot-title">${esc(e.c.title)}</span>
         <span class="slot-line">${timeRange(e.c, " - ")}</span>
         <span class="slot-line">${esc(e.c.room)}</span>

@@ -191,6 +191,13 @@ input { font: inherit; color: inherit; }
 .slot.magenta { background: var(--magenta-6); border-color: var(--magenta-8); }
 .slot.mustard { background: var(--mustard-6); border-color: var(--mustard-8); }
 .slot.green { background: var(--green-6); border-color: var(--green-8); }
+/* Selected (course open in the right-side Course Details): fill with the color's -8 shade */
+.slot.blue.is-selected { background: var(--blue-8); border-color: var(--blue-8); }
+.slot.magenta.is-selected { background: var(--magenta-8); border-color: var(--magenta-8); }
+.slot.mustard.is-selected { background: var(--mustard-8); border-color: var(--mustard-8); }
+.slot.green.is-selected { background: var(--green-8); border-color: var(--green-8); }
+.slot.is-selected:hover { filter: none; }
+.slot.hatched.is-selected { border: 2px solid var(--blue-8); }
 /* Hatched = preview or added but not yet confirmed (Figma: hover state) */
 .slot.hatched {
   background-color: var(--stone-1);
