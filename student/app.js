@@ -317,9 +317,12 @@
   }
   function renderDetails() {
     const panel = $("#details");
-    const show = selectedId && activeTab !== "compare";
-    panel.hidden = !show;
+    const show = !!(selectedId && activeTab !== "compare");
+    // keep the old content while it slides back behind the column
     if (show) $("#detailsBody").innerHTML = detailCardHTML(byId[selectedId]);
+    panel.classList.toggle("is-open", show);
+    panel.setAttribute("aria-hidden", String(!show));
+    panel.inert = !show;
   }
   function renderCalendarDetails() {
     const panel = $("#calDetails");

@@ -306,3 +306,16 @@ input { font: inherit; color: inherit; }
 a.btn { text-decoration: none; }
 .collapse-body { overflow: hidden; }
 .detail-sections > div { max-width: 532px; }
+
+/* Course Details slides out from behind the left column */
+.details-clip { position: fixed; z-index: 20; top: 0; bottom: 0; left: 432px; right: 0; overflow: hidden; pointer-events: none; }
+.details-clip .overlay-panel.details {
+  position: absolute; left: 15px; top: 24px; pointer-events: auto;
+  transform: translateX(calc(-100% - 40px)); visibility: hidden;
+  transition: transform .36s cubic-bezier(.22, .8, .24, 1), visibility 0s linear .36s;
+}
+.details-clip .overlay-panel.details.is-open {
+  transform: none; visibility: visible;
+  transition: transform .36s cubic-bezier(.22, .8, .24, 1), visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) { .details-clip .overlay-panel.details { transition: none !important; } }
