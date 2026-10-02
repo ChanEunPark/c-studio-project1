@@ -7,8 +7,24 @@ Each page of the project lives in its own folder:
 | Folder | Page | Live link |
 | --- | --- | --- |
 | `courseeditor/` | Course Editor (professor side) | https://chaneunpark.github.io/c-studio-project1/courseeditor/ |
+| `student/` | Course Planner (student side) | https://chaneunpark.github.io/c-studio-project1/student/ |
 
 To add a page: create a new folder with its own `index.html`, then add a card for it in the top-level `index.html`.
+
+---
+
+## Course Planner (`student/`)
+
+Prototype of the **student side**: students find courses, compare them and build a weekly plan.
+
+1. **Suggestions** – "Taken by students in the same program" and "Recommended". Hover a course to preview it on the calendar (hatched).
+2. **Search & filters** – recent searches and live suggestions; the filter button opens the Filters drawer (college, department, level, units, day, time, location, building).
+3. **View course info** – click a course for Course Details: visit the course information page, download the syllabus, save it.
+4. **Add course** – *Add to Plan* in Course Details places it on the calendar as hatched (not confirmed).
+5. **Compare** – in the Compare tab, pick two saved courses to see them side by side.
+6. **Confirm** – *Confirm* (next to *Add Pages*) turns added courses into solid blocks.
+
+Also: Saved tab with bookmark toggles, plan tabs and *Add Pages*, collapsible greeting panel.
 
 ---
 

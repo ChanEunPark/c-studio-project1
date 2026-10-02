@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>C Studio – Course Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <!-- ============ Left: explore courses ============ -->
+    <div class="side">
+      <div class="side-card">
+        <div class="tabs side-tabs" role="tablist">
+          <button role="tab" class="tab is-active" data-tab="search">Search</button>
+          <button role="tab" class="tab" data-tab="saved">Saved <span class="badge" id="savedCount">5</span></button>
+          <button role="tab" class="tab" data-tab="compare">Compare</button>
+        </div>
+        <div class="side-body">
+
+          <!-- Search tab -->
+          <div class="tab-panel" data-panel="search">
+            <div class="search-wrap">
+              <form class="search-box" id="searchForm" autocomplete="off">
+                <div class="search-field">
+                  <input id="searchInput" type="text" placeholder="Search titles, lecturers, etc." aria-label="Search courses" />
+                  <button type="button" class="filter-btn" id="filterBtn" aria-label="Filters">
+                    <img src="assets/icon-filter.svg" alt="" width="16" height="16" />
+                    <span class="filter-dot" id="filterDot" hidden></span>
+                  </button>
+                </div>
+                <button type="submit" class="search-submit" aria-label="Search"><img src="assets/icon-search-white.svg" alt="" width="14" height="14" /></button>
+              </form>
+              <div class="search-drop" id="searchDrop" role="listbox" hidden></div>
+            </div>
+            <div id="searchLists"></div>
+          </div>
+
+          <!-- Saved tab -->
+          <div class="tab-panel" data-panel="saved" hidden>
+            <div class="course-list" id="savedList"></div>
+          </div>
+
+          <!-- Compare tab -->
+          <div class="tab-panel" data-panel="compare" hidden>
+            <div class="course-list" id="compareList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Right: plan ============ -->
+    <div class="planned">
+      <section class="general" id="general">
+        <div class="general-head">
+          <div class="general-top">
+            <button class="icon-btn" id="collapseGeneral" aria-label="Collapse" aria-expanded="true"><img src="assets/icon-minus.svg" alt="" width="14" height="14" /><span class="plus-bar"></span></button>
+          </div>
+          <div class="greeting">
+            <p class="h4">Hi, Crystal</p>
+            <p class="h4">Master’s course registration period is on <em>Nov 17th to 20th.</em></p>
+          </div>
+        </div>
+        <div class="progress-row" id="progressRow">
+          <div class="progress">
+            <p class="bold">Academic Progress</p>
+            <div class="progress-line"><div class="track"><div class="fill" style="width:30%"></div></div><span>30%</span></div>
+          </div>
+          <div class="progress">
+            <p class="bold">Course Requirements</p>
+            <div class="progress-line"><div class="track"><div class="fill" style="width:48%"></div></div><span>48%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="timetable">
+        <div class="tt-head">
+          <div class="tabs plan-tabs" id="planTabs" role="tablist"></div>
+          <div class="tt-actions">
+            <button class="btn btn-primary" id="confirmBtn" hidden>Confirm</button>
+            <button class="btn btn-secondary" id="addPageBtn">Add Pages</button>
+          </div>
+        </div>
+        <div class="tt-days">
+          <div class="tt-corner"></div>
+          <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div>
+        </div>
+        <div class="tt-scroll" id="ttScroll">
+          <div class="tt-grid" id="ttGrid">
+            <div class="tt-rows" id="ttRows"></div>
+            <div class="tt-events" id="ttEvents"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ Course details (overlay) ============ -->
+    <aside class="overlay-panel details" id="details" hidden>
+      <div class="panel-head">
+        <p class="h4">Course Details</p>
+        <button class="icon-btn" id="closeDetails" aria-label="Close course details"><img src="assets/icon-close.svg" alt="" width="14" height="14" /></button>
+      </div>
+      <div id="detailsBody"></div>
+    </aside>
+
+    <!-- ============ Compare (overlay) ============ -->
+    <aside class="compare" id="compare" hidden></aside>
+  </div>
+
+  <!-- ============ Filters drawer ============ -->
+  <div class="scrim" id="filterScrim" hidden></div>
+  <aside class="filters" id="filters" hidden aria-label="Filters">
+    <div class="filters-head">
+      <p class="filters-title">Filters</p>
+      <button class="icon-btn" id="closeFilters" aria-label="Close filters"><img src="assets/icon-close-filter.svg" alt="" width="14" height="14" /></button>
+    </div>
+    <div class="filters-body" id="filtersBody"></div>
+    <div class="filters-foot">
+      <p class="mono-sm" id="filterCount">0 results</p>
+      <div class="foot-btns">
+        <button class="btn btn-lg btn-secondary" id="clearFilters">Clear all</button>
+        <button class="btn btn-lg btn-primary" id="applyFilters">Apply</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <img src="assets/icon-check-circle.svg" alt="" width="16" height="16" />
+    <p id="toastText"></p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

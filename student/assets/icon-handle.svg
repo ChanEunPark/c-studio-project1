@@ -1,0 +1,7 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14.001" height="14.001" viewBox="0 0 14.001 14.001" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Components/Handle">
+<rect x="1" y="1" width="12.001" height="12.001" rx="6.0005" fill="#FBFAF9"/>
+<rect x="1" y="1" width="12.001" height="12.001" rx="6.0005" stroke="#99BDEF" stroke-width="2"/>
+<circle id="handle" cx="7.0005" cy="7.0005" r="0.0005" fill="#FBFAF9"/>
+</g>
+</svg>
