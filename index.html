@@ -3,383 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>C Studio – Course Editor</title>
+  <title>C Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:ital,wght@0,400;0,500;1,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --stone-1: #fbfaf9;
+      --stone-3: #f2f1ef;
+      --stone-5: #e1dedb;
+      --neutral-8: #bdbab0;
+      --primary-6: #104eaa;
+      --text-85: rgba(11, 11, 11, 0.85);
+      --text-60: rgba(11, 11, 11, 0.6);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--stone-5); color: var(--text-85);
+      font-family: "Hanken Grotesk", system-ui, sans-serif; font-size: 16px; line-height: 24px;
+      padding: 96px 16px;
+    }
+    main { max-width: 960px; margin: 0 auto; }
+    h1 { font-family: "Newsreader", Georgia, serif; font-weight: 400; font-size: 48px; line-height: normal; margin: 0 0 8px; }
+    .lead { color: var(--text-60); margin: 0 0 40px; }
+    .pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .page {
+      display: flex; flex-direction: column; gap: 8px; padding: 24px; border-radius: 16px;
+      background: var(--stone-3); border: 1px solid var(--neutral-8); color: inherit; text-decoration: none;
+    }
+    .page:hover { border-color: var(--primary-6); }
+    .page h2 { font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 24px; line-height: 34px; margin: 0; }
+    .page p { margin: 0; color: var(--text-60); }
+    .page span { margin-top: 8px; color: var(--primary-6); }
+  </style>
 </head>
 <body>
-
-  <!-- ============ Page header ============ -->
-  <header class="page-header">
-    <div class="heading-left">
-      <button class="icon-only" aria-label="Back"><img src="assets/icon-back.svg" alt="" width="16" height="16" /></button>
-      <div class="heading-title">
-        <p class="h4">Communication Design Studio: Theory and Practice</p>
-        <p class="body secondary" id="lastUpdate">Last Update: 03/27/2026 04:56pm</p>
-      </div>
-    </div>
-    <div class="heading-extra">
-      <div class="menu-anchor">
-        <button class="btn btn-secondary" id="publishBtn" aria-haspopup="menu">
-          <img src="assets/icon-publish.svg" alt="" width="14" height="14" />Publish
-        </button>
-        <div class="dropdown-menu publish-menu" id="publishMenu" role="menu" hidden>
-          <button role="menuitem" data-action="publish">Publish</button>
-          <button role="menuitem" data-action="email">Send as Email</button>
-          <button role="menuitem" data-action="canvas">Set up in Canvas</button>
-          <button role="menuitem" data-action="syllabus">Export as Syllabus</button>
-          <button role="menuitem" data-action="poster">Export as course poster</button>
-        </div>
-      </div>
-      <button class="btn btn-primary" id="saveBtn"><img src="assets/icon-save.svg" alt="" width="14" height="14" />Save</button>
-      <button class="btn-legacy-more" aria-label="More"><img src="assets/icon-header-more.svg" alt="" width="14" height="14" /></button>
-    </div>
-  </header>
-
-  <!-- ============ Banner + avatar ============ -->
-  <div class="hero">
-    <div class="banner" id="banner">
-      <img id="bannerImg" alt="" hidden />
-      <div class="menu-anchor banner-edit">
-        <button class="round-btn round-btn-lg" id="bannerEditBtn" aria-label="Change banner" aria-haspopup="menu">
-          <img src="assets/icon-pencil.svg" alt="" width="14" height="14" />
-        </button>
-        <div class="dropdown-menu banner-menu" id="bannerMenu" role="menu" hidden>
-          <button role="menuitem" data-action="upload">Upload from computer</button>
-          <button role="menuitem" data-action="ai">Make Image with AI</button>
-        </div>
-      </div>
-      <input type="file" id="bannerFile" accept="image/*" hidden />
-    </div>
-    <div class="avatar-wrap">
-      <div class="avatar" id="avatar"><span>C</span><img id="avatarImg" alt="" hidden /></div>
-      <button class="round-btn round-btn-sm avatar-edit" id="avatarEditBtn" aria-label="Change course image">
-        <img src="assets/icon-pencil.svg" alt="" width="14" height="14" />
-      </button>
-      <input type="file" id="avatarFile" accept="image/*" hidden />
-    </div>
-  </div>
-
-  <!-- ============ Content ============ -->
-  <main class="page-content">
-    <div class="content">
-
-      <div class="info-wrap" id="infoWrap">
-        <div class="modal-info">
-          <div class="modal-info-content">
-            <img src="assets/icon-info.svg" alt="" width="22" height="22" />
-            <div class="modal-info-text">
-              <p>Help students find the right fit for your course.<br />By completing your course page, you give students a reliable place to understand what they’ll learn and what to expect before registering. </p>
-              <p>Manage your course information and syllabus in one place, and help reduce repeated questions and last-minute enrollment changes.</p>
-            </div>
-          </div>
-          <button class="btn btn-primary" id="dismissInfo">Dismiss</button>
-        </div>
-      </div>
-
-      <section class="course-head">
-        <div class="course-meta">
-          <p>2027 Spring</p><p>51729-A</p><p>School of Design</p><p>15 credits</p><p>In-Person</p>
-        </div>
-        <h1 class="course-title">Communication Design Studio: Theory and Practice</h1>
-        <div class="course-info">
-          <p>Stacie Rohrbach</p><p>Mon, Wed</p><p>02:00-04:50pm</p><p>Pittsburgh</p><p>Margaret Morrison</p><p>Room 215</p>
-        </div>
-      </section>
-
-      <div class="columns">
-        <!-- ---------- Main column ---------- -->
-        <div class="main-col" id="mainCol">
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Description</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="body-text" contenteditable="true" data-field data-placeholder="Describe what this course is about.">In this course students learn how the form of communication impacts the way people perceive and process messages by investigating communication theories and applying them to the design of messages. Students learn how to approach communication challenges through exercises and projects where they pose questions, observe and capture information through sketching and photographing, developing and iterating concepts, and evaluating their effectiveness. This course is intended for MDES &amp; MPS students in Design; all other students by permission of the instructor.</div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Learning Objective</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="body-text" contenteditable="true" data-field data-placeholder="Share what students will learn to help them decide whether this course aligns with their interests and goals."></div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section data-always-filled>
-              <div class="container-head">
-                <h2 class="h4">Workload</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="workload-total">
-                <img src="assets/icon-snippets.svg" alt="" width="21" height="21" />
-                <p class="h5-sans">16 hrs</p><p class="h5-sans secondary">/ week total</p>
-              </div>
-              <div class="workload">
-                <div class="slider" id="slider">
-                  <div class="track" id="track"><div class="track-fill" id="trackFill"></div></div>
-                  <div class="marks" id="marks"></div>
-                  <img class="handle" id="handle" src="assets/icon-handle.svg" alt="" width="14" height="14" />
-                </div>
-                <div class="brackets">
-                  <div class="bracket bracket-in" id="bracketIn">
-                    <img src="assets/bracket-blue.svg" alt="" />
-                    <p class="mono" id="inLabel">5hrs in class</p>
-                  </div>
-                  <div class="bracket bracket-out" id="bracketOut">
-                    <img src="assets/bracket-pink.svg" alt="" />
-                    <p class="mono" id="outLabel">11 hrs studio work and research</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <div class="block">
-            <div class="pair">
-              <section class="container" data-section>
-                <div class="container-head">
-                  <h2 class="h4">Course Deliverables</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <div class="body-text" contenteditable="true" data-field data-placeholder="How students are assessed is one of their top questions when choosing a course. Describe the types of work they can expect, such as group or individual projects, exams, essays, quizzes, and participation and engagement expectations."></div>
-              </section>
-              <section class="container" data-section>
-                <div class="container-head">
-                  <h2 class="h4">Evaluation Metrics</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <div class="segmented" role="radiogroup" aria-label="Grading format">
-                  <button role="radio" aria-checked="true" class="is-selected">Letter</button>
-                  <button role="radio" aria-checked="false">On a curve</button>
-                  <button role="radio" aria-checked="false">Pass/Fail</button>
-                </div>
-                <div class="body-text" contenteditable="true" data-field data-placeholder="Explain how final grades are calculated, including the grading format and the weight of each assessment. This helps students understand how different parts of their work contribute to their grade."></div>
-              </section>
-            </div>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Rubric</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="body-text" contenteditable="true" data-field data-placeholder="Share your grading criteria and what you expect at each performance level. A clear rubric helps students understand how their work will be evaluated and what they need to do to succeed."></div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Learning Outcomes</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="body-text" contenteditable="true" data-placeholder="Introduce the outcomes.">By the end of this course, students will be able to:</div>
-              <ul class="body-text outcomes" contenteditable="true" data-field>
-                <li>Explain how audiences and contexts shape design decisions.</li>
-                <li>Apply communication theories to create effective messages.</li>
-                <li>Use a cohesive, iterative design process to develop and refine concepts.</li>
-                <li>Capture and develop ideas through sketching and notation.</li>
-                <li>Organize complex content into clear layers, sequences, and stories.</li>
-                <li>Translate abstract concepts into simple, concrete forms.</li>
-                <li>Design pieces that invite interaction and provide feedback.</li>
-              </ul>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container container-clip" data-section id="workSection">
-              <div class="container-head between">
-                <div class="container-head">
-                  <h2 class="h4">Examples of Student Work</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <button class="btn btn-secondary btn-hover-primary" id="addProjectBtn">
-                  <img src="assets/icon-plus-btn.svg" alt="" width="14" height="14" />Add project
-                </button>
-              </div>
-              <div class="carousel" id="workCarousel"><div class="card-row" id="workRow"></div></div>
-              <div class="carousel-nav">
-                <button class="round-btn round-btn-lg" data-scroll="-1" aria-label="Previous projects"><img src="assets/icon-chev-left.svg" alt="" width="14" height="14" /></button>
-                <button class="round-btn round-btn-lg" data-scroll="1" aria-label="Next projects"><img src="assets/icon-chev-right.svg" alt="" width="14" height="14" /></button>
-              </div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Degree Contributions</h2><span class="status" aria-label="Completed"></span>
-              </div>
-              <div class="body-text" contenteditable="true" data-field data-placeholder="Describe which degree requirements this course fulfills.">Required for MDes students in the School of Design.</div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section>
-              <div class="container-head between">
-                <div class="container-head">
-                  <h2 class="h4">Who is this class for?</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <div class="checks">
-                  <label class="checkbox"><input type="checkbox" /><span class="box"></span>Undergraduate Student</label>
-                  <label class="checkbox"><input type="checkbox" checked /><span class="box"></span>Graduate Student</label>
-                </div>
-              </div>
-              <div class="body-text" contenteditable="true" data-field data-placeholder="Describe who this course is intended for.">This course is intended for MDES &amp; MPS students in Design, all other students by permission of the instructor. </div>
-              <div class="reqs">
-                <div class="req"><p class="h5-serif">Prerequisites</p><div class="body-text" contenteditable="true">N/A</div></div>
-                <div class="req"><p class="h5-serif">Substitutes</p><div class="body-text" contenteditable="true">N/A</div></div>
-                <div class="req"><p class="h5-serif">Corequisites</p><div class="body-text" contenteditable="true">N/A</div></div>
-              </div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section id="testimonialSection">
-              <div class="testimonial-head">
-                <div class="container-head">
-                  <h2 class="h4">Testimonials</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <p class="body secondary-medium">Select student testimonials from FCE feedback to display on your course information page. Sharing student perspectives helps prospective students understand what to expect from your course.</p>
-              </div>
-              <div class="testimonial-row" id="testimonialRow"></div>
-              <div class="carousel-nav">
-                <button class="round-btn round-btn-lg" data-tscroll="-1" aria-label="Previous testimonials"><img src="assets/icon-chev-left.svg" alt="" width="14" height="14" /></button>
-                <button class="round-btn round-btn-lg" data-tscroll="1" aria-label="Next testimonials"><img src="assets/icon-chev-right.svg" alt="" width="14" height="14" /></button>
-              </div>
-            </section>
-          </div>
-
-          <div class="block">
-            <section class="container" data-section id="faqSection">
-              <div class="container-head between">
-                <div class="container-head">
-                  <h2 class="h4">FAQs</h2><span class="status" aria-label="Completed"></span>
-                </div>
-                <button class="btn btn-secondary btn-hover-primary" id="addFaqBtn">
-                  <img src="assets/icon-plus-btn.svg" alt="" width="14" height="14" />Add FAQ
-                </button>
-              </div>
-              <div class="faq-list" id="faqList"></div>
-            </section>
-          </div>
-
-        </div>
-
-        <!-- ---------- Sidebar ---------- -->
-        <aside class="side-col">
-          <section class="container side" data-section data-always-filled>
-            <div class="container-head">
-              <h2 class="h4">Syllabus</h2><span class="status" aria-label="Completed"></span>
-            </div>
-            <button class="link" id="syllabusLink">Communication_Studio-Syllabus.pdf</button>
-            <input type="file" id="syllabusFile" accept=".pdf,.doc,.docx" hidden />
-          </section>
-
-          <section class="container side" data-section data-always-filled>
-            <div class="container-head">
-              <h2 class="h4">Typical Class Size</h2><span class="status" aria-label="Completed"></span>
-            </div>
-            <div class="menu-anchor full">
-              <button class="dropdown-trigger" id="sizeTrigger" aria-haspopup="listbox">
-                <span id="sizeValue">15 - 20</span>
-                <img src="assets/icon-dropdown.svg" alt="" width="10" height="11" />
-              </button>
-              <div class="dropdown-menu size-menu" id="sizeMenu" role="listbox" hidden>
-                <button role="option">Under 10</button>
-                <button role="option">10 - 15</button>
-                <button role="option">15 - 20</button>
-                <button role="option">20 - 30</button>
-                <button role="option">30+</button>
-              </div>
-            </div>
-          </section>
-
-          <section class="container side">
-            <h2 class="h4">Related Links:</h2>
-            <a class="link" href="https://www.design.cmu.edu/" target="_blank" rel="noopener">design.cmu.edu</a>
-          </section>
-
-          <section class="container side" data-section>
-            <h2 class="h4">Additional Notes</h2>
-            <div class="body-text" contenteditable="true" data-field data-placeholder="Please write down any additional information Students should be aware of."></div>
-          </section>
-
-          <section class="container side" data-section data-always-filled>
-            <div class="container-head">
-              <h2 class="h4">Tags</h2><span class="status" aria-label="Completed"></span>
-            </div>
-            <div class="tags" id="tags"></div>
-          </section>
-        </aside>
-      </div>
+  <main>
+    <h1>C Studio</h1>
+    <p class="lead">Design studio project prototypes.</p>
+    <div class="pages">
+      <!-- Add a card here for each new page folder -->
+      <a class="page" href="courseeditor/">
+        <h2>Course Editor</h2>
+        <p>Professor side — upload and edit course information.</p>
+        <span>Open prototype →</span>
+      </a>
     </div>
   </main>
-
-  <!-- ============ Modals ============ -->
-  <div class="overlay" id="projectOverlay" hidden>
-    <div class="modal modal-project" role="dialog" aria-modal="true" aria-labelledby="projectTitle">
-      <div class="modal-header">
-        <p class="h5-sans" id="projectTitle">Add project</p>
-        <button class="icon-only" data-close aria-label="Close"><img src="assets/icon-modal-close.svg" alt="" width="16" height="16" /></button>
-      </div>
-      <form class="modal-content" id="projectForm" autocomplete="off">
-        <div class="form-item">
-          <label for="fSemester">Semester<span>:</span></label>
-          <div class="select-wrap">
-            <select id="fSemester">
-              <option>Spring 2027</option><option>Fall 2026</option><option selected>Spring 2026</option><option>Fall 2025</option><option>Spring 2025</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-item">
-          <label for="fStudents">Student Name<span>:</span></label>
-          <input class="field" id="fStudents" placeholder="Jane Doe, John Doe" />
-        </div>
-        <div class="form-item">
-          <label for="fName">Project Name<span>:</span></label>
-          <input class="field" id="fName" placeholder="Example Project" required />
-        </div>
-        <div class="form-item">
-          <label for="fLink">Link<span>:</span></label>
-          <input class="field" id="fLink" placeholder="www.example.com" />
-        </div>
-      </form>
-      <div class="modal-footer">
-        <button class="btn btn-primary" type="submit" form="projectForm" id="projectSubmit">Add</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="overlay" id="emailOverlay" hidden>
-    <div class="modal modal-email" role="dialog" aria-modal="true" aria-labelledby="emailTitle">
-      <div class="modal-header">
-        <p class="h5-sans" id="emailTitle">Send as Email</p>
-        <button class="icon-only" data-close aria-label="Close"><img src="assets/icon-modal-close.svg" alt="" width="16" height="16" /></button>
-      </div>
-      <div class="modal-content email-content">
-        <div class="email-row">
-          <div class="autocomplete">
-            <input class="field" id="emailInput" placeholder="janed@andrew.cmu.edu" autocomplete="off" />
-            <div class="dropdown-menu suggest-menu" id="suggestMenu" role="listbox" hidden></div>
-          </div>
-          <button class="btn btn-secondary" id="emailAdd">Add</button>
-        </div>
-        <div class="email-tags" id="emailTags"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="emailSend">Send</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
-    <img src="assets/icon-check-circle.svg" alt="" width="16" height="16" />
-    <p id="toastText"></p>
-  </div>
-
-  <script src="app.js"></script>
 </body>
 </html>

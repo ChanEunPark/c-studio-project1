@@ -1,4 +1,18 @@
-# C Studio – Course Editor Prototype
+# C Studio – Prototypes
+
+Live site: https://chaneunpark.github.io/c-studio-project1/
+
+Each page of the project lives in its own folder:
+
+| Folder | Page | Live link |
+| --- | --- | --- |
+| `courseeditor/` | Course Editor (professor side) | https://chaneunpark.github.io/c-studio-project1/courseeditor/ |
+
+To add a page: create a new folder with its own `index.html`, then add a card for it in the top-level `index.html`.
+
+---
+
+## Course Editor (`courseeditor/`)
 
 A working prototype of the **professor side** of C Studio: a page where professors upload and edit course information for students. Built from the Figma design board ("C Studio – Design Board", Professor side screens).
 
@@ -6,13 +20,13 @@ Plain HTML, CSS and JavaScript — no build step or install.
 
 ## Run it
 
-Open `index.html` in a browser, or serve the folder locally:
+Open `courseeditor/index.html` in a browser, or serve the repo locally:
 
 ```bash
 python3 -m http.server 5173
 ```
 
-then visit http://localhost:5173.
+then visit http://localhost:5173/courseeditor/.
 
 ## What you can do
 
@@ -25,7 +39,7 @@ then visit http://localhost:5173.
 
 Also interactive: workload slider, grading format, class size, audience checkboxes, testimonials (*Display This*), FAQs (*Add FAQ*), tags, and *Save*.
 
-## Files
+## Files (in `courseeditor/`)
 
 - `index.html` – page structure
 - `styles.css` – styles and design tokens from Figma
