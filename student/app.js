@@ -323,10 +323,13 @@
   }
   function renderCalendarDetails() {
     const panel = $("#calDetails");
-    const show = calendarId && inPlan(calendarId);
+    const show = !!(calendarId && inPlan(calendarId));
     if (!show) calendarId = null;
-    panel.hidden = !show;
+    // keep the old content while it slides out
     if (show) $("#calDetailsBody").innerHTML = detailCardHTML(byId[calendarId], { fromCalendar: true });
+    panel.classList.toggle("is-open", show);
+    panel.setAttribute("aria-hidden", String(!show));
+    panel.inert = !show;
   }
   function closeCalendarDetails() { calendarId = null; renderCalendarDetails(); }
   $("#closeCalDetails").addEventListener("click", closeCalendarDetails);
@@ -485,7 +488,7 @@
   // ---------- Tabs ----------
   function switchTab(tab) {
     activeTab = tab;
-    if (tab === "compare") calendarId = null, $("#calDetails").hidden = true;
+    if (tab === "compare") closeCalendarDetails();
     $$(".side-tabs .tab").forEach((t) => t.classList.toggle("is-active", t.dataset.tab === tab));
     $$(".tab-panel").forEach((p) => (p.hidden = p.dataset.panel !== tab));
     renderLists(); renderDetails(); renderCompare();

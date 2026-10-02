@@ -292,7 +292,16 @@ input { font: inherit; color: inherit; }
 
 .details-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 /* Opened from the calendar: right side, Register / Delete */
-.overlay-panel.cal-details { left: min(896px, calc(100vw - 824px)); width: 800px; box-shadow: none; }
+.overlay-panel.cal-details {
+  left: auto; right: 32px; width: min(800px, calc(100vw - 64px)); box-shadow: none;
+  transform: translateX(calc(100% + 32px)); visibility: hidden;
+  transition: transform .32s cubic-bezier(.22, .8, .24, 1), visibility 0s linear .32s;
+}
+.overlay-panel.cal-details.is-open {
+  transform: none; visibility: visible;
+  transition: transform .32s cubic-bezier(.22, .8, .24, 1), visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) { .overlay-panel.cal-details, .overlay-panel.cal-details.is-open { transition: none; } }
 .results { padding-bottom: 32px; }
 a.btn { text-decoration: none; }
 .collapse-body { overflow: hidden; }
