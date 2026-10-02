@@ -561,10 +561,19 @@
   function openFilters() {
     draft = cloneFilters(filters);
     renderFilters();
-    $("#filters").hidden = false; $("#filterScrim").hidden = false;
+    setFiltersOpen(true);
     drop.hidden = true;
+    $("#closeFilters").focus({ preventScroll: true });
   }
-  function closeFilters() { $("#filters").hidden = true; $("#filterScrim").hidden = true; }
+  function closeFilters() { setFiltersOpen(false); }
+  function setFiltersOpen(open) {
+    const panel = $("#filters"), scrim = $("#filterScrim");
+    panel.classList.toggle("is-open", open);
+    scrim.classList.toggle("is-open", open);
+    panel.setAttribute("aria-hidden", String(!open));
+    panel.inert = !open;
+  }
+  const filtersOpen = () => $("#filters").classList.contains("is-open");
   $("#filterBtn").addEventListener("click", openFilters);
   $("#closeFilters").addEventListener("click", closeFilters);
   $("#filterScrim").addEventListener("click", closeFilters);
@@ -624,7 +633,7 @@
 
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (!$("#filters").hidden) return closeFilters();
+    if (filtersOpen()) return closeFilters();
     if (calendarId) return closeCalendarDetails();
     if (selectedId) { selectedId = null; renderLists(); renderDetails(); }
   });
