@@ -281,9 +281,10 @@
     const isSaved = saved.has(c.id);
     const item = inPlan(c.id);
     const planBtn = item
-      ? `<button class="btn btn-lg btn-secondary blue" data-plan-remove="${c.id}">Remove from ${esc(plan().name)}</button>`
-      : `<button class="btn btn-lg btn-secondary blue" data-plan-add="${c.id}">Add to ${esc(plan().name)}</button>`;
+      ? `<button class="btn btn-lg btn-secondary blue plan-btn" data-plan-remove="${c.id}">Remove from plan</button>`
+      : `<button class="btn btn-lg btn-primary plan-btn" data-plan-add="${c.id}">Add to plan</button>`;
     return `<div class="detail-card">
+      <div class="detail-scroll">
       <div class="detail-top">
         <div class="course-top">
           <span class="course-code">${c.id}</span>
@@ -295,15 +296,16 @@
       <div class="detail-credits">${c.units} Credits  |  ${esc(c.mode)}</div>
       <div class="detail-tags">${c.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>
       <div class="detail-actions">
-        <a class="btn btn-lg btn-primary" href="../courseeditor/" target="_blank" rel="noopener">Visit Course Information Page</a>
+        <a class="btn btn-lg btn-secondary blue" href="../courseeditor/" target="_blank" rel="noopener">Visit Course Information Page</a>
         <button class="btn btn-lg btn-secondary blue" data-syllabus="${c.id}">Download Syllabus</button>
-        ${planBtn}
       </div>
       <div class="detail-sections">
         <div><h3>Description</h3><p>${esc(c.description)}</p></div>
         <div><h3>Prerequisites</h3><p>${esc(c.prereq)}</p></div>
         <div><h3>Related Links</h3><a href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.link.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a></div>
       </div>
+      </div>
+      <div class="detail-foot">${planBtn}</div>
     </div>`;
   }
   function renderDetails() {
