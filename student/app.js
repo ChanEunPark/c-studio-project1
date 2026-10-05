@@ -186,6 +186,7 @@
     $("#savedList").innerHTML = [...saved].map((id) => cardHTML(byId[id], { selected: id === selectedId })).join("")
       || `<p class="list-empty">No saved courses yet. Use the bookmark icon on any course to save it.</p>`;
     $("#compareBtn").disabled = compareSel.length < 2;
+    $("#compareReset").disabled = compareSel.length === 0;
     $("#compareList").innerHTML = [...saved].map((id) => cardHTML(byId[id], { selected: compareSel.includes(id), checkbox: true })).join("")
       || `<p class="list-empty">Save courses first, then pick two here to compare.</p>`;
   }
@@ -512,6 +513,11 @@
   }
   $$(".side-tabs .tab").forEach((t) => t.addEventListener("click", () => switchTab(t.dataset.tab)));
   $("#compareBtn").addEventListener("click", () => { compareOpen = true; renderCompare(); });
+  $("#compareReset").addEventListener("click", () => {
+    compareSel.length = 0;
+    compareOpen = false;
+    renderSaved(); renderCompare();
+  });
 
   // ---------- General information collapse ----------
   $("#collapseGeneral").addEventListener("click", (e) => {

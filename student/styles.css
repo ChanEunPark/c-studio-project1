@@ -345,7 +345,8 @@ a.btn { text-decoration: none; }
   display: flex; justify-content: center; padding: 16px; background: var(--stone-1);
   border-top: 1px solid var(--stone-7); border-radius: 0 0 8px 8px;
 }
-#compareBtn { width: 137px; }
+.compare-foot { gap: 16px; }
+.compare-foot .btn { flex: 1 1 0; min-width: 0; }
 .compare-check { width: 16px; height: 16px; margin: 5px; flex: none; border-radius: 2px; background: var(--stone-1); border: 1px solid var(--stone-5); }
 .compare-check.on { background: url(assets/icon-checkbox-checked.svg) center / 16px 16px no-repeat; border-color: transparent; }
 .course:hover .compare-check:not(.on) { border-color: var(--primary-6); }
