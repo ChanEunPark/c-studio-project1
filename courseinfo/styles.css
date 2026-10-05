@@ -142,6 +142,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .btn-fce { width: 120px; color: var(--text-85); }
 .fce-rates { display: flex; gap: 24px; width: 100%; padding-bottom: 16px; font-size: 16px; line-height: 24px; color: var(--text-85); }
 .fce-rates > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+/* full page: the card sits in the sidebar; the embedded panel keeps it in the main column */
+.fce-main { display: none; }
+.embed .fce-main { display: flex; }
+.fce-rates-side { justify-content: space-between; }
+.fce-rates-side > div { flex: none; }
+.btn-fce-side { width: 100%; }
 
 /* ---------- Testimonials ---------- */
 .testimonial-row { display: flex; gap: 24px; align-items: flex-start; width: 100%; }
