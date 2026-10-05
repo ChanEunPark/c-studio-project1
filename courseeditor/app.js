@@ -13,10 +13,10 @@
     { title: "Cultural Connections", semester: "Spring 2025", students: "Chris, Doris, Minjee", link: "", img: "assets/work-cultural.png", h: 204.55, top: -64.38 },
   ];
   const testimonials = [
-    { quote: "“This course helped me think beyond how a design looks and focus on how people actually understand it. I became much more intentional about my design decisions.”", name: "Maya Chen", shown: false },
-    { quote: "“Be prepared to spend time developing and documenting projects outside of class. Keeping track of my process took effort, but it helped me understand why some ideas worked better than others.”", name: "Alex Morgan", shown: false },
-    { quote: "“The critiques were the most valuable part. Hearing how classmates read my work showed me where my message was getting lost.”", name: "Jordan Lee", shown: false },
-    { quote: "“Sketching every idea before going digital felt slow at first, but it made my final pieces much clearer.”", name: "Priya Nair", shown: false },
+    { quote: "“This course helped me think beyond how a design looks and focus on how people actually understand it. I became much more intentional about my design decisions.”", name: "Maya Chen", year: "MDes Class of 2027", shown: false },
+    { quote: "“Be prepared to spend time developing and documenting projects outside of class. Keeping track of my process took effort, but it helped me understand why some ideas worked better than others.”", name: "Alex Morgan", year: "MDes Class of 2027", shown: false },
+    { quote: "“The critiques were the most valuable part. Hearing how classmates read my work showed me where my message was getting lost.”", name: "Jordan Lee", year: "MDes Class of 2026", shown: false },
+    { quote: "“Sketching every idea before going digital felt slow at first, but it made my final pieces much clearer.”", name: "Priya Nair", year: "MPS Class of 2026", shown: false },
   ];
   const faqs = [
     { q: "Will I need to work on projects outside of class?", a: "Yes. You’ll develop, produce, and document your course projects outside scheduled class time." },
@@ -29,7 +29,8 @@
     "darcyk@andrew.cmu.edu", "crystalp@andrew.cmu.edu", "pragyas@andrew.cmu.edu",
     "srohrbach@andrew.cmu.edu", "mayac@andrew.cmu.edu", "alexm@andrew.cmu.edu",
   ];
-  const TOTAL_HOURS = 16;
+  const TOTAL_HOURS = 16;   // slider scale
+  let studioHours = 11;
   let inClass = 5;
 
   // ---------- Toast ----------
@@ -76,7 +77,9 @@
     const d = new Date();
     const p = (n) => String(n).padStart(2, "0");
     let h = d.getHours(); const ap = h >= 12 ? "pm" : "am"; h = h % 12 || 12;
-    $("#lastUpdate").textContent = `Last Update: ${p(d.getMonth() + 1)}/${p(d.getDate())}/${d.getFullYear()} ${p(h)}:${p(d.getMinutes())}${ap}`;
+    const when = `${p(d.getMonth() + 1)}/${p(d.getDate())}/${d.getFullYear()} ${p(h)}:${p(d.getMinutes())}${ap}`;
+    $("#lastUpdate").textContent = `Last Update: ${when}`;
+    $("#updatedAt").textContent = `Updated: ${when}`;
   }
   $("#saveBtn").addEventListener("click", () => { stamp(); toast("Your changes have been saved."); });
 
@@ -166,7 +169,8 @@
     inB.hidden = inClass === 0; outB.hidden = inClass === TOTAL_HOURS;
     inB.style.flex = `0 0 calc((100% - 2px) * ${inClass / TOTAL_HOURS})`;
     $("#inLabel").textContent = `${inClass}hrs in class`;
-    $("#outLabel").textContent = `${TOTAL_HOURS - inClass} hrs studio work and research`;
+    $("#outLabel").textContent = `${studioHours} hrs studio work and research`;
+    $("#weeklyTotal").textContent = `${inClass + studioHours} hrs`;
   }
   function valueFromPointer(x) {
     const r = $("#track").getBoundingClientRect();
@@ -191,6 +195,61 @@
     else if (e.key === "ArrowLeft" || e.key === "ArrowDown") inClass = Math.max(0, inClass - 1);
     else return;
     e.preventDefault(); renderWorkload();
+  });
+
+  $("#editStudio").addEventListener("click", () => {
+    const label = $("#outLabel");
+    if ($(".studio-input", label)) return;
+    label.innerHTML = `<input class="studio-input" type="number" min="0" max="60" value="${studioHours}" aria-label="Studio hours per week"> hrs studio work and research`;
+    const inp = $(".studio-input", label);
+    inp.focus(); inp.select();
+    let done = false;
+    const commit = (save) => {
+      if (done) return; done = true;
+      const v = Math.round(Number(inp.value));
+      if (save && Number.isFinite(v)) studioHours = Math.max(0, Math.min(60, v));
+      renderWorkload();
+    };
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") commit(true);
+      if (e.key === "Escape") { e.stopPropagation(); commit(false); }
+    });
+    inp.addEventListener("blur", () => commit(true));
+  });
+
+  // ---------- Rubric upload ----------
+  const rubricFiles = [];
+  function renderRubricFiles() {
+    $("#rubricFiles").innerHTML = rubricFiles.map((f, i) => `
+      <span class="rubric-file"><a class="link" href="${f.url}" target="_blank" rel="noopener">${esc(f.name)}</a>
+      <button data-rubric-rm="${i}" aria-label="Remove ${esc(f.name)}"><img src="assets/icon-tag-close.svg" alt="" width="10" height="10"></button></span>`).join("");
+    const sec = $("#rubricFiles").closest("[data-section]");
+    sec.toggleAttribute("data-always-filled", rubricFiles.length > 0);
+    refreshSection(sec);
+  }
+  $("#rubricUpload").addEventListener("click", () => $("#rubricFile").click());
+  $("#rubricFile").addEventListener("change", (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    rubricFiles.push({ name: f.name, url: URL.createObjectURL(f) });
+    e.target.value = "";
+    renderRubricFiles();
+    toast("Rubric uploaded.");
+  });
+  $("#rubricFiles").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-rubric-rm]"); if (!b) return;
+    rubricFiles.splice(+b.dataset.rubricRm, 1); renderRubricFiles();
+  });
+
+  // ---------- Prerequisites / Substitutes / Corequisites ----------
+  const REQ_OPTIONS = ["N/A", "51-121 Communication Design Fundamentals", "51-171 Communications Studio I", "51-671 Design Principles & Practices", "51-701 Seminar I: Interaction & Service Design", "Permission of the instructor"];
+  $$("#reqs .req").forEach((req, i) => {
+    const title = req.dataset.req;
+    req.innerHTML = `<p class="h5-serif">${title}</p>
+      <div class="menu-anchor">
+        <button class="dropdown-trigger" id="reqTrigger${i}" aria-haspopup="listbox" aria-label="${title}"><span>N/A</span><img src="assets/icon-dropdown.svg" alt="" width="10" height="11"></button>
+        <div class="dropdown-menu req-menu" id="reqMenu${i}" role="listbox" hidden>${REQ_OPTIONS.map((o) => `<button role="option">${esc(o)}</button>`).join("")}</div>
+      </div>`;
+    bindMenu($(`#reqTrigger${i}`), $(`#reqMenu${i}`), (item) => ($(`#reqTrigger${i} span`).textContent = item.textContent));
   });
 
   // ---------- Examples of Student Work ----------
@@ -323,7 +382,7 @@
       <div class="testimonial">
         <blockquote>${esc(t.quote)}</blockquote>
         <div class="testimonial-foot">
-          <p>${esc(t.name)}</p>
+          <div class="testimonial-meta"><span>${esc(t.name)}</span><span>${esc(t.year || "")}</span></div>
           <button class="btn ${t.shown ? "btn-primary" : "btn-secondary"}" data-t="${tIndex + k}" aria-pressed="${t.shown}">${t.shown ? "Displayed" : "Display This"}</button>
         </div>
       </div>`).join("");

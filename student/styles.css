@@ -336,3 +336,16 @@ a.btn { text-decoration: none; }
   transition: transform .36s cubic-bezier(.22, .8, .24, 1), visibility 0s;
 }
 @media (prefers-reduced-motion: reduce) { .details-clip .overlay-panel.details { transition: none !important; } }
+
+/* Compare tab: checkbox cards + Compare button pinned to the bottom of the column */
+.compare-foot { display: none; }
+.side-card.compare-mode { display: flex; flex-direction: column; padding-bottom: 0; min-height: min(1032px, calc(100vh - 48px)); }
+.side-card.compare-mode .side-body { flex: 1; border-radius: 0; }
+.side-card.compare-mode .compare-foot {
+  display: flex; justify-content: center; padding: 16px; background: var(--stone-1);
+  border-top: 1px solid var(--stone-7); border-radius: 0 0 8px 8px;
+}
+#compareBtn { width: 137px; }
+.compare-check { width: 16px; height: 16px; margin: 5px; flex: none; border-radius: 2px; background: var(--stone-1); border: 1px solid var(--stone-5); }
+.compare-check.on { background: url(assets/icon-checkbox-checked.svg) center / 16px 16px no-repeat; border-color: transparent; }
+.course:hover .compare-check:not(.on) { border-color: var(--primary-6); }

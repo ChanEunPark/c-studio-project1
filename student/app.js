@@ -103,16 +103,24 @@
   let selectedId = null;      // course open in Course Details (from the lists)
   let calendarId = null;      // course open from the calendar (Register / Delete)
   const compareSel = [];      // up to 2 course ids in Compare
+  let compareOpen = false;    // comparison shown after clicking "Compare"
   let activeTab = "search";
 
-  function cardHTML(c, { selected = false } = {}) {
+  const DEPT_CODES = { "Design": "DES", "CIT Interdisciplinary": "CIT", "English": "ENG", "Biomedical Engineering": "BME", "Software Engineering": "SE" };
+  const code = (c) => `${DEPT_CODES[c.dept] || ""} ${c.id}`.trim();
+
+  function cardHTML(c, { selected = false, checkbox = false } = {}) {
     const isSaved = saved.has(c.id);
-    return `<div class="course${selected ? " is-selected" : ""}" role="button" tabindex="0" data-id="${c.id}">
-      <div class="course-top">
-        <span class="course-code">${c.id}</span>
-        <button class="bookmark" data-save="${c.id}" aria-pressed="${isSaved}" aria-label="${isSaved ? "Remove from saved" : "Save course"}">
+    const corner = checkbox
+      ? `<span class="compare-check${selected ? " on" : ""}" aria-hidden="true"></span>`
+      : `<button class="bookmark" data-save="${c.id}" aria-pressed="${isSaved}" aria-label="${isSaved ? "Remove from saved" : "Save course"}">
           <img src="assets/${isSaved ? "icon-bookmark-filled" : "icon-bookmark"}.svg" alt="">
-        </button>
+        </button>`;
+    const role = checkbox ? `role="checkbox" aria-checked="${selected}"` : `role="button"`;
+    return `<div class="course${selected ? " is-selected" : ""}" ${role} tabindex="0" data-id="${c.id}">
+      <div class="course-top">
+        <span class="course-code">${code(c)}</span>
+        ${corner}
       </div>
       <p class="course-title">${esc(c.title)}</p>
       <div class="course-meta"><span>${esc(c.instructor)}</span><span>${esc(c.room)}</span></div>
@@ -177,7 +185,8 @@
     $("#savedCount").textContent = saved.size;
     $("#savedList").innerHTML = [...saved].map((id) => cardHTML(byId[id], { selected: id === selectedId })).join("")
       || `<p class="list-empty">No saved courses yet. Use the bookmark icon on any course to save it.</p>`;
-    $("#compareList").innerHTML = [...saved].map((id) => cardHTML(byId[id], { selected: compareSel.includes(id) })).join("")
+    $("#compareBtn").disabled = compareSel.length < 2;
+    $("#compareList").innerHTML = [...saved].map((id) => cardHTML(byId[id], { selected: compareSel.includes(id), checkbox: true })).join("")
       || `<p class="list-empty">Save courses first, then pick two here to compare.</p>`;
   }
 
@@ -270,6 +279,7 @@
       const k = compareSel.indexOf(id);
       if (k >= 0) compareSel.splice(k, 1);
       else { compareSel.push(id); if (compareSel.length > 2) compareSel.shift(); }
+      if (!compareSel.length) compareOpen = false;
       renderSaved(); renderCompare();
       return;
     }
@@ -279,7 +289,7 @@
   }
 
   // ---------- Course details & compare ----------
-  function detailCardHTML(c, { fromCalendar = false } = {}) {
+  function detailCardHTML(c, { fromCalendar = false, inCompare = false } = {}) {
     const isSaved = saved.has(c.id);
     const item = inPlan(c.id);
     const planBtn = fromCalendar && item
@@ -289,12 +299,12 @@
          <button class="btn btn-lg btn-secondary plan-btn" data-plan-delete="${c.id}">Delete</button>`
       : item
         ? `<button class="btn btn-lg btn-secondary blue plan-btn" data-plan-remove="${c.id}">Remove from plan</button>`
-        : `<button class="btn btn-lg btn-primary plan-btn" data-plan-add="${c.id}">Add to plan</button>`;
+        : `<button class="btn btn-lg ${inCompare ? "btn-secondary" : "btn-primary"} plan-btn" data-plan-add="${c.id}">Add to plan</button>`;
     return `<div class="detail-card">
       <div class="detail-scroll">
       <div class="detail-top">
         <div class="course-top">
-          <span class="course-code">${c.id}</span>
+          <span class="course-code">${code(c)}</span>
           <button class="bookmark" data-save="${c.id}" aria-pressed="${isSaved}" aria-label="${isSaved ? "Remove from saved" : "Save course"}"><img src="assets/${isSaved ? "icon-bookmark-filled" : "icon-bookmark"}.svg" alt=""></button>
         </div>
         <p class="detail-title">${esc(c.title)}</p>
@@ -340,12 +350,12 @@
 
   function renderCompare() {
     const box = $("#compare");
-    const show = activeTab === "compare" && compareSel.length > 0;
+    const show = activeTab === "compare" && compareOpen && compareSel.length > 0;
     box.hidden = !show;
     if (!show) return;
     box.innerHTML = compareSel.map((id) => `<section class="compare-panel">
       <div class="panel-head"><p class="h4">Selected Course</p></div>
-      ${detailCardHTML(byId[id])}
+      ${detailCardHTML(byId[id], { inCompare: true })}
     </section>`).join("");
   }
   $("#closeDetails").addEventListener("click", () => { selectedId = null; renderLists(); renderDetails(); });
@@ -493,12 +503,15 @@
   // ---------- Tabs ----------
   function switchTab(tab) {
     activeTab = tab;
+    compareOpen = false;
+    $(".side-card").classList.toggle("compare-mode", tab === "compare");
     if (tab === "compare") closeCalendarDetails();
     $$(".side-tabs .tab").forEach((t) => t.classList.toggle("is-active", t.dataset.tab === tab));
     $$(".tab-panel").forEach((p) => (p.hidden = p.dataset.panel !== tab));
     renderLists(); renderDetails(); renderCompare();
   }
   $$(".side-tabs .tab").forEach((t) => t.addEventListener("click", () => switchTab(t.dataset.tab)));
+  $("#compareBtn").addEventListener("click", () => { compareOpen = true; renderCompare(); });
 
   // ---------- General information collapse ----------
   $("#collapseGeneral").addEventListener("click", (e) => {

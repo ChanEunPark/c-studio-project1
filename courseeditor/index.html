@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:ital,wght@0,400;0,500;1,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
 
@@ -80,8 +80,11 @@
       </div>
 
       <section class="course-head">
+        <div class="course-dates">
+          <p id="updatedAt">Updated: 03/27/2026 04:56pm</p><p>Created: 01/27/2018 01:52pm</p>
+        </div>
         <div class="course-meta">
-          <p>2027 Spring</p><p>51729-A</p><p>School of Design</p><p>15 credits</p><p>In-Person</p>
+          <p>2027 Spring</p><p>DES 51729-A</p><p>School of Design</p><p>15 credits</p><p>In-Person</p>
         </div>
         <h1 class="course-title">Communication Design Studio: Theory and Practice</h1>
         <div class="course-info">
@@ -118,7 +121,7 @@
               </div>
               <div class="workload-total">
                 <img src="assets/icon-snippets.svg" alt="" width="21" height="21" />
-                <p class="h5-sans">16 hrs</p><p class="h5-sans secondary">/ week total</p>
+                <p class="h5-sans" id="weeklyTotal">16 hrs</p><p class="h5-sans secondary">/ week total</p>
               </div>
               <div class="workload">
                 <div class="slider" id="slider">
@@ -133,7 +136,10 @@
                   </div>
                   <div class="bracket bracket-out" id="bracketOut">
                     <img src="assets/bracket-pink.svg" alt="" />
-                    <p class="mono" id="outLabel">11 hrs studio work and research</p>
+                    <div class="out-label">
+                      <p class="mono" id="outLabel">11 hrs studio work and research</p>
+                      <button class="icon-btn-sm" id="editStudio" aria-label="Edit studio hours"><img src="assets/icon-pencil.svg" alt="" width="14" height="14" /></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -164,9 +170,16 @@
 
           <div class="block">
             <section class="container" data-section>
-              <div class="container-head">
-                <h2 class="h4">Rubric</h2><span class="status" aria-label="Completed"></span>
+              <div class="container-head between">
+                <div class="container-head">
+                  <h2 class="h4">Rubric</h2><span class="status" aria-label="Completed"></span>
+                </div>
+                <button class="btn btn-secondary btn-hover-primary" id="rubricUpload">
+                  <img src="assets/icon-plus-btn.svg" alt="" width="14" height="14" />Upload
+                </button>
+                <input type="file" id="rubricFile" accept=".pdf,.doc,.docx,.xlsx,.png,.jpg" hidden />
               </div>
+              <div class="rubric-files" id="rubricFiles"></div>
               <div class="body-text" contenteditable="true" data-field data-placeholder="Share your grading criteria and what you expect at each performance level. A clear rubric helps students understand how their work will be evaluated and what they need to do to succeed."></div>
             </section>
           </div>
@@ -228,10 +241,10 @@
                 </div>
               </div>
               <div class="body-text" contenteditable="true" data-field data-placeholder="Describe who this course is intended for.">This course is intended for MDES &amp; MPS students in Design, all other students by permission of the instructor. </div>
-              <div class="reqs">
-                <div class="req"><p class="h5-serif">Prerequisites</p><div class="body-text" contenteditable="true">N/A</div></div>
-                <div class="req"><p class="h5-serif">Substitutes</p><div class="body-text" contenteditable="true">N/A</div></div>
-                <div class="req"><p class="h5-serif">Corequisites</p><div class="body-text" contenteditable="true">N/A</div></div>
+              <div class="reqs" id="reqs">
+                <div class="req" data-req="Prerequisites"></div>
+                <div class="req" data-req="Substitutes"></div>
+                <div class="req" data-req="Corequisites"></div>
               </div>
             </section>
           </div>
@@ -380,6 +393,6 @@
     <p id="toastText"></p>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
