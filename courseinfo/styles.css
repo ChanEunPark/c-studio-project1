@@ -136,6 +136,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .work-sub { color: var(--text-60); }
 .carousel-nav { display: flex; justify-content: space-between; width: 100%; }
 
+/* ---------- Faculty Course Evaluations ---------- */
+.card-fce { gap: 10px; }
+.card-head-center { align-items: center; }
+.btn-fce { width: 120px; }
+.fce-rates { display: flex; gap: 24px; width: 100%; padding-bottom: 16px; font-size: 16px; line-height: 24px; color: var(--text-85); }
+.fce-rates > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+
 /* ---------- Testimonials ---------- */
 .testimonial-row { display: flex; gap: 24px; align-items: flex-start; width: 100%; }
 .testimonial { flex: 1 1 0; min-width: 0; background: var(--stone-2); border: 1px solid var(--neutral-8); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }

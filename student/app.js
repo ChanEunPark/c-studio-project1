@@ -351,6 +351,11 @@
     if (item && item.registered) return `<button class="btn btn-sm btn-primary" disabled>Registered</button>`;
     return `<button class="btn btn-sm btn-primary" ${item ? `data-register="${id}"` : `data-register-new="${id}"`}>Register</button>`;
   }
+  function addToPlanButtonHTML(id) {
+    return inPlan(id)
+      ? `<button class="btn btn-sm btn-primary" disabled>Added to plan</button>`
+      : `<button class="btn btn-sm btn-primary" data-plan-add="${id}">Add to plan</button>`;
+  }
   function registerNew(id) {
     if (inPlan(id)) return register(id);
     const c = byId[id];
@@ -366,7 +371,7 @@
     // keep the old content while it slides back behind the column
     if (show) {
       setCourseFrame($("#detailsFrame"), byId[selectedId]);
-      $("#detailsActions").innerHTML = registerButtonHTML(selectedId);
+      $("#detailsActions").innerHTML = addToPlanButtonHTML(selectedId);
     }
     panel.classList.toggle("is-open", show);
     panel.setAttribute("aria-hidden", String(!show));

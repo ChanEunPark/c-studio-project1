@@ -66,7 +66,7 @@
     $$(".reqs .body-m", who)[1].textContent = "N/A";
     $$(".reqs .body-m", who)[2].textContent = "N/A";
     // Sections we only have content for on the sample course are hidden
-    const HIDE = /^(Workload|Course Deliverables|Evaluation Metrics|Rubric|Learning Outcomes|Examples of Student Work|Degree Contributions|Testimonials|FAQs)$/;
+    const HIDE = /^(Workload|Course Deliverables|Evaluation Metrics|Rubric|Learning Outcomes|Examples of Student Work|Degree Contributions|Testimonials|Faculty Course Evaluations|FAQs)$/;
     $$(".card").forEach((c) => { const h = $("h2", c); if (h && HIDE.test(h.textContent.trim())) c.hidden = true; });
     $$(".pair").forEach((p) => { if ($$(".card", p).every((c) => c.hidden)) p.hidden = true; });
     window.__COURSE_OVERRIDE__ = o;
