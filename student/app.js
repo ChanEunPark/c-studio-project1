@@ -314,7 +314,7 @@
       <div class="detail-credits">${c.units} Credits  |  ${esc(c.mode)}</div>
       <div class="detail-tags">${c.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>
       <div class="detail-actions">
-        <a class="btn btn-lg btn-secondary blue" href="../courseeditor/" target="_blank" rel="noopener">Visit Course Information Page</a>
+        <a class="btn btn-lg btn-secondary blue" href="../courseinfo/" target="_blank" rel="noopener">Visit Course Information Page</a>
         <button class="btn btn-lg btn-secondary blue" data-syllabus="${c.id}">Download Syllabus</button>
       </div>
       <div class="detail-sections">

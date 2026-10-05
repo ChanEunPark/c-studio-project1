@@ -8,6 +8,7 @@ Each page of the project lives in its own folder:
 | --- | --- | --- |
 | `courseeditor/` | Course Editor (professor side) | https://chaneunpark.github.io/c-studio-project1/courseeditor/ |
 | `student/` | Course Planner (student side) | https://chaneunpark.github.io/c-studio-project1/student/ |
+| `courseinfo/` | Course Information (published, student view) | https://chaneunpark.github.io/c-studio-project1/courseinfo/ |
 
 To add a page: create a new folder with its own `index.html`, then add a card for it in the top-level `index.html`.
 
