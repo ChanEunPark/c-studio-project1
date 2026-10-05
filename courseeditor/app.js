@@ -92,7 +92,7 @@
     }
   });
 
-  // ---------- Banner & avatar ----------
+  // ---------- Banner ----------
   const bannerImg = $("#bannerImg");
   function setBanner(src) { bannerImg.src = src; bannerImg.hidden = false; }
   bindMenu($("#bannerEditBtn"), $("#bannerMenu"), (item) => {
@@ -101,13 +101,6 @@
   });
   $("#bannerFile").addEventListener("change", (e) => {
     const f = e.target.files[0]; if (f) setBanner(URL.createObjectURL(f));
-    e.target.value = "";
-  });
-  $("#avatarEditBtn").addEventListener("click", () => $("#avatarFile").click());
-  $("#avatarFile").addEventListener("change", (e) => {
-    const f = e.target.files[0]; if (!f) return;
-    const img = $("#avatarImg"); img.src = URL.createObjectURL(f); img.hidden = false;
-    $("#avatar span").hidden = true;
     e.target.value = "";
   });
 
