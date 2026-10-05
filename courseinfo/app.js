@@ -12,6 +12,66 @@
     toastTimer = setTimeout(() => ($("#toast").hidden = true), 3200);
   }
 
+  // ---------- Embedded mode (inside the Course Planner's Course Details panel) ----------
+  // ?embed=1 → single-column layout; #d=<base64 JSON> → show another course's basic info.
+  const EMBED = document.documentElement.classList.contains("embed");
+  if (EMBED) {
+    const head = $(".course-head-main");
+    // Typical class size joins the info row; dates and tags move under it; syllabus becomes the first band
+    const size = document.createElement("p");
+    size.id = "classSizeLine";
+    size.textContent = "Typical Class Size: 18";
+    $(".course-info").appendChild(size);
+    const dates = $(".course-dates"); head.appendChild(dates);
+    const tags = $(".side-col .tags"); head.appendChild(tags);
+    const syllabus = $(".side-col .card"); syllabus.classList.add("band-syllabus");
+    $(".course-head").after(syllabus);
+    // Related links move into the Description band
+    const linksCard = $$(".side-col .card").find((c) => /Related Links/.test(c.textContent));
+    const desc = $(".main-col .card");
+    const wrap = document.createElement("div");
+    wrap.className = "related-inline";
+    wrap.append($("h2", linksCard), $("a", linksCard));
+    desc.appendChild(wrap);
+    // Course cards open in the full window (not inside the panel)
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a.course"); if (!a) return;
+      e.preventDefault(); window.top.location.href = a.href;
+    });
+  }
+  const override = (() => {
+    const m = location.hash.match(/#d=([^&]+)/);
+    if (!m) return null;
+    try { return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]))))); } catch { return null; }
+  })();
+  if (override) {
+    const o = override;
+    const setP = (els, vals) => els.forEach((el, i) => { if (vals[i] == null) el.remove(); else el.textContent = vals[i]; });
+    setP($$(".course-meta p"), [o.semester, o.code, o.school, `${o.units} credits`, o.mode]);
+    $(".course-title").textContent = o.title;
+    document.title = `${o.title} – Course Information`;
+    setP($$(".course-info p:not(#classSizeLine)"), [o.instructor, o.days, o.time, o.city, o.building, o.room]);
+    const size = $("#classSizeLine"); if (size) size.textContent = `Typical Class Size: ${o.classSize}`;
+    $(".page-header .h4").textContent = o.title;
+    $$(".course-dates p")[0].textContent = "Updated: 09/14/2026 10:12am";
+    $$(".course-dates p")[1].textContent = "Created: 08/02/2022 03:40pm";
+    $(".tags").innerHTML = o.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+    const syl = $("[data-file$='Syllabus.pdf']");
+    syl.textContent = syl.dataset.file = `${o.code.replace(/\s+/g, "_")}-Syllabus.pdf`;
+    $(".main-col .card .body-m").textContent = o.description;
+    $(".level-tag").textContent = o.level;
+    const who = $$(".card").find((c) => /Who is this class for/.test(c.textContent));
+    $(".body-m", who).textContent = `This course is intended for ${o.level.toLowerCase()} students. Reach out to the instructor if you have questions about eligibility.`;
+    $$(".reqs .body-m", who)[0].textContent = o.prereq;
+    $$(".reqs .body-m", who)[1].textContent = "N/A";
+    $$(".reqs .body-m", who)[2].textContent = "N/A";
+    // Sections we only have content for on the sample course are hidden
+    const HIDE = /^(Workload|Course Deliverables|Evaluation Metrics|Rubric|Learning Outcomes|Examples of Student Work|Degree Contributions|Testimonials|FAQs)$/;
+    $$(".card").forEach((c) => { const h = $("h2", c); if (h && HIDE.test(h.textContent.trim())) c.hidden = true; });
+    $$(".pair").forEach((p) => { if ($$(".card", p).every((c) => c.hidden)) p.hidden = true; });
+    window.__COURSE_OVERRIDE__ = o;
+  }
+
   // ---------- Workload (read only) ----------
   const TOTAL = 16, IN_CLASS = 5;
   $("#marks").innerHTML = Array.from({ length: TOTAL + 1 }, (_, i) =>
@@ -110,8 +170,15 @@
     { code: "DES 51-648", title: "Design Fusion: Design Anthropology", rows: [["Annalisa Pao", "T,Th - 7:00-8:50pm", "6 units", "MM 215"]], topics: ["Research", "Communication"] },
     { code: "DES 51-265", title: "Environments Studio I: Understanding Form & Context", rows: [["Peter Scupelli", "T,Th - 8:00-9:50am", "9 units", "MM 215"]], topics: ["Environments", "Interaction Design"] },
   ];
-  $("#otherList").innerHTML = other.map(course).join("");
-  $("#relatedList").innerHTML = related.map(course).join("");
+  const o = window.__COURSE_OVERRIDE__;
+  if (o) {
+    $$(".pair-top .card h2")[0].textContent = `Other Classes taught by ${o.instructor}`;
+    $("#otherList").innerHTML = o.other.length ? o.other.map(course).join("") : `<p class="empty">No other classes this semester.</p>`;
+    $("#relatedList").innerHTML = o.related.length ? o.related.map(course).join("") : `<p class="empty">No related courses found.</p>`;
+  } else {
+    $("#otherList").innerHTML = other.map(course).join("");
+    $("#relatedList").innerHTML = related.map(course).join("");
+  }
 
   const TOPICS = ["Interaction Design", "Communication", "Technology", "Environments", "Research", "Sustainability"];
   let interests = new Set(TOPICS);

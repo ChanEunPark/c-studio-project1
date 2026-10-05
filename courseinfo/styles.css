@@ -208,3 +208,37 @@ a.btn { text-decoration: none; }
 .dropdown-menu button { padding: 5px 12px; text-align: left; white-space: nowrap; }
 .dropdown-menu button:hover { background: #f1f7ff; font-weight: 500; }
 @media print { .page-header, .carousel-nav, #askBtn, #interestsBtn { display: none !important; } }
+
+/* ======================================================================
+   Embedded mode (?embed=1): single column, as in the Course Details panel
+   (Figma reference frames "600" / Course Details, 600px and 800px wide)
+   ====================================================================== */
+.embed body { background: var(--stone-5); }
+.embed .page-header, .embed .side-col { display: none !important; }
+.embed .banner { height: 200px; border-bottom: 0; }
+.embed .banner img { height: 1152px; top: -534.7px; }
+.embed .page { padding: 0 0 24px; }
+.embed .content { width: 100%; }
+.embed .course-head { display: block; }
+.embed .course-head-main { padding: 60px 24px 24px; }
+.embed .course-meta { flex-wrap: wrap; gap: 16px 32px; }
+.embed .course-title { font-weight: 500; font-size: 40px; }
+.embed .course-info { gap: 16px 40px; }
+.embed .course-dates { flex-direction: row; flex-wrap: wrap; gap: 0 24px; padding: 0; }
+.embed .course-head-main > .tags { gap: 8px; }
+.embed .card { border-radius: 0; border-width: 1px 0; width: 100%; }
+.embed .band-syllabus { gap: 10px; }
+.embed .columns { display: block; padding-top: 24px; }
+.embed .main-col { gap: 24px; }
+.embed .pair, .embed .pair-top { flex-direction: column; gap: 24px; }
+.embed .pair > .card { flex: none; }
+.embed .related-inline { display: flex; flex-direction: column; gap: 8px; }
+.embed .reqs { gap: 24px; }
+.embed .reqs > div { flex: 1 1 0; min-width: 0; }
+.embed .testimonial-row { flex-direction: column; }
+.embed .testimonial { width: 100%; flex: none; }
+.embed .testimonial blockquote { font-size: 24px; line-height: 34px; }
+.embed .faq { gap: 8px; }
+.embed .faq > img { width: 24px; height: 24px; }
+.embed .suggested-head { gap: 10px; }
+.embed .overlay { align-items: flex-start; padding-top: 80px; }

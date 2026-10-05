@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=11" />
+  <link rel="stylesheet" href="styles.css?v=12" />
 </head>
 <body>
   <div class="layout">
@@ -108,9 +108,10 @@
       <aside class="overlay-panel details" id="details" aria-hidden="true" inert>
         <div class="panel-head">
           <p class="h4">Course Details</p>
+          <div class="panel-actions" id="detailsActions"></div>
           <button class="icon-btn" id="closeDetails" aria-label="Close course details"><img src="assets/icon-close.svg" alt="" width="14" height="14" /></button>
         </div>
-        <div class="details-body" id="detailsBody"></div>
+        <div class="details-body"><iframe class="course-frame" id="detailsFrame" title="Course information"></iframe></div>
       </aside>
     </div>
 
@@ -118,9 +119,10 @@
     <aside class="overlay-panel cal-details" id="calDetails" aria-hidden="true" inert>
       <div class="panel-head">
         <p class="h4">Course Details</p>
+        <div class="panel-actions" id="calDetailsActions"></div>
         <button class="icon-btn" id="closeCalDetails" aria-label="Close course details"><img src="assets/icon-close.svg" alt="" width="14" height="14" /></button>
       </div>
-      <div class="details-body" id="calDetailsBody"></div>
+      <div class="details-body"><iframe class="course-frame" id="calDetailsFrame" title="Course information"></iframe></div>
     </aside>
 
     <!-- ============ Compare (overlay) ============ -->
@@ -149,6 +151,6 @@
     <p id="toastText"></p>
   </div>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

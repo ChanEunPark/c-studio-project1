@@ -350,3 +350,12 @@ a.btn { text-decoration: none; }
 .compare-check { width: 16px; height: 16px; margin: 5px; flex: none; border-radius: 2px; background: var(--stone-1); border: 1px solid var(--stone-5); }
 .compare-check.on { background: url(assets/icon-checkbox-checked.svg) center / 16px 16px no-repeat; border-color: transparent; }
 .course:hover .compare-check:not(.on) { border-color: var(--primary-6); }
+
+/* Course Details panels: header actions + embedded course page */
+.overlay-panel.details, .overlay-panel.cal-details { padding: 17px 0; gap: 10px; }
+.details .panel-head, .cal-details .panel-head { align-items: center; padding: 0 16px; height: 34px; }
+.details .panel-head .h4, .cal-details .panel-head .h4 { line-height: 34px; }
+.panel-actions { display: flex; gap: 10px; align-items: center; }
+.btn-sm { height: 28px; padding: 0 7px; border-radius: 6px; font-size: 16px; line-height: 24px; gap: 6px; }
+.btn-sm.btn-primary:disabled { opacity: .55; }
+.course-frame { flex: 1; min-height: 0; width: 100%; border: 0; display: block; background: var(--stone-5); }

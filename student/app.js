@@ -326,11 +326,48 @@
       <div class="detail-foot">${planBtn}</div>
     </div>`;
   }
+  // ---------- Course Details panels show the published course page (single-column mode) ----------
+  const ROOMS = { MM: "Margaret Morrison", BH: "Baker Hall", TCS: "4615 Forbes", MI: "Mellon Institute", ANSYS: "ANSYS" };
+  function courseInfoData(c) {
+    const asCard = (x) => ({ code: code(x), title: x.title, rows: [[x.instructor, x.room], [`${dayList(x)} - ${timeRange(x)}`, `${x.units} units`]] });
+    return {
+      semester: "2027 Spring", code: code(c), school: c.dept === "Design" ? "School of Design" : c.dept, units: c.units, mode: c.mode,
+      title: c.title, instructor: c.instructor, days: dayList(c), time: timeRange(c), city: city(c),
+      building: ROOMS[c.room.split(" ")[0]] || c.building, room: `Room ${c.room.split(" ").slice(1).join(" ")}`,
+      classSize: 12 + (c.units % 9), description: c.description, prereq: c.prereq, tags: c.tags, level: c.level,
+      other: catalog.filter((x) => x.instructor === c.instructor && x.id !== c.id).slice(0, 3).map(asCard),
+      related: catalog.filter((x) => x.id !== c.id && x.tags.some((t) => c.tags.includes(t))).slice(0, 4).map(asCard),
+    };
+  }
+  function setCourseFrame(frame, c) {
+    if (frame.dataset.id === c.id) return;
+    frame.dataset.id = c.id;
+    let src = `../courseinfo/?embed=1&course=${encodeURIComponent(c.id)}`;
+    if (c.id !== "51-729") src += "#d=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(courseInfoData(c))))));
+    frame.src = src;
+  }
+  function registerButtonHTML(id) {
+    const item = inPlan(id);
+    if (item && item.registered) return `<button class="btn btn-sm btn-primary" disabled>Registered</button>`;
+    return `<button class="btn btn-sm btn-primary" ${item ? `data-register="${id}"` : `data-register-new="${id}"`}>Register</button>`;
+  }
+  function registerNew(id) {
+    if (inPlan(id)) return register(id);
+    const c = byId[id];
+    const clash = plan().items.map((i) => byId[i.id]).find((o) => overlaps(o, c));
+    plan().items.push({ id, color: nextColor(), status: "confirmed", registered: true });
+    renderPlan(); renderDetails(); renderCompare(); renderCalendarDetails();
+    toast(clash ? `You're registered for ${c.title}. It overlaps with ${clash.title}.` : `You're registered for ${c.title}.`);
+  }
+
   function renderDetails() {
     const panel = $("#details");
     const show = !!(selectedId && activeTab !== "compare");
     // keep the old content while it slides back behind the column
-    if (show) $("#detailsBody").innerHTML = detailCardHTML(byId[selectedId]);
+    if (show) {
+      setCourseFrame($("#detailsFrame"), byId[selectedId]);
+      $("#detailsActions").innerHTML = registerButtonHTML(selectedId);
+    }
     panel.classList.toggle("is-open", show);
     panel.setAttribute("aria-hidden", String(!show));
     panel.inert = !show;
@@ -340,7 +377,11 @@
     const show = !!(calendarId && inPlan(calendarId));
     if (!show) calendarId = null;
     // keep the old content while it slides out
-    if (show) $("#calDetailsBody").innerHTML = detailCardHTML(byId[calendarId], { fromCalendar: true });
+    if (show) {
+      setCourseFrame($("#calDetailsFrame"), byId[calendarId]);
+      $("#calDetailsActions").innerHTML = `${registerButtonHTML(calendarId)}
+        <button class="btn btn-sm btn-secondary" data-plan-delete="${calendarId}">Delete</button>`;
+    }
     panel.classList.toggle("is-open", show);
     panel.setAttribute("aria-hidden", String(!show));
     panel.inert = !show;
@@ -366,6 +407,8 @@
     if (add) return addToPlan(add.dataset.planAdd);
     const rm = e.target.closest("[data-plan-remove]");
     if (rm) return removeFromPlan(rm.dataset.planRemove);
+    const regNew = e.target.closest("[data-register-new]");
+    if (regNew) return registerNew(regNew.dataset.registerNew);
     const reg = e.target.closest("[data-register]");
     if (reg) return register(reg.dataset.register);
     const del = e.target.closest("[data-plan-delete]");
