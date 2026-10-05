@@ -6,8 +6,8 @@
   <title>C Studio – Course Editor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:ital,wght@0,400;0,500;1,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,700;1,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
 
@@ -121,7 +121,7 @@
               </div>
               <div class="workload-total">
                 <img src="assets/icon-snippets.svg" alt="" width="21" height="21" />
-                <p class="h5-sans" id="weeklyTotal">16 hrs</p><p class="h5-sans secondary">/ week total</p>
+                <p class="h5-sans total-hrs" id="weeklyTotal" role="button" tabindex="0" title="Click to change the weekly total" aria-label="Weekly total hours, click to edit">16 hrs</p><p class="h5-sans secondary">/ week total</p>
               </div>
               <div class="workload">
                 <div class="slider" id="slider">
@@ -393,6 +393,6 @@
     <p id="toastText"></p>
   </div>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

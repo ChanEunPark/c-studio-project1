@@ -381,7 +381,6 @@ body.is-reordering, body.is-reordering * { cursor: grabbing !important; user-sel
 .icon-btn-sm { display: inline-flex; padding: 6px 7px; border-radius: 6px; }
 .icon-btn-sm:hover { background: rgba(11, 11, 11, .06); }
 .icon-btn-sm img { display: block; }
-.studio-input { width: 3.2em; font-family: var(--mono); font-size: 16px; line-height: 24px; padding: 0 4px; border: 1px solid var(--primary-6); border-radius: 2px; background: var(--stone-1); text-align: right; outline: none; }
 
 /* Rubric uploads */
 .rubric-files { display: flex; flex-wrap: wrap; gap: 8px 16px; }
@@ -395,3 +394,23 @@ body.is-reordering, body.is-reordering * { cursor: grabbing !important; user-sel
 .req .menu-anchor { width: 100%; }
 .req-menu { left: 0; right: 0; top: calc(100% + 4px); }
 .dropdown-trigger span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Weekly total: bold, clickable to edit */
+.total-hrs { font-weight: 700; cursor: text; border-radius: 6px; padding: 0 4px; margin: 0 -4px; }
+.total-hrs:not(.is-editing):hover { background: rgba(11, 11, 11, .06); }
+.total-hrs:focus-visible { outline: 2px solid var(--primary-6); outline-offset: 2px; }
+.total-hrs.is-editing, #outLabel.is-editing { padding: 0; margin: 0; }
+#outLabel.is-editing { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Inline input (white box, light border, soft shadow) */
+.edit-field {
+  display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px;
+  background: #fff; border: 1px solid #e3e2e0; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(15, 15, 15, .08), 0 1px 2px rgba(15, 15, 15, .06);
+}
+.edit-field:focus-within { border-color: #c9c7c3; }
+.edit-field input { border: 0; outline: 0; background: transparent; padding: 0; color: var(--text-85); }
+.total-field input { width: 2.6ch; font: 700 20px/28px var(--sans); text-align: right; -moz-appearance: textfield; }
+.total-field input::-webkit-outer-spin-button, .total-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.total-field span { font: 700 20px/28px var(--sans); }
+.label-field input { width: 26ch; font: 400 16px/24px var(--mono); color: var(--neutral-13); }

@@ -29,8 +29,7 @@
     "darcyk@andrew.cmu.edu", "crystalp@andrew.cmu.edu", "pragyas@andrew.cmu.edu",
     "srohrbach@andrew.cmu.edu", "mayac@andrew.cmu.edu", "alexm@andrew.cmu.edu",
   ];
-  const TOTAL_HOURS = 16;   // slider scale
-  let studioHours = 11;
+  let totalHours = 16;    // weekly total (editable); also the slider scale
   let inClass = 5;
 
   // ---------- Toast ----------
@@ -156,25 +155,44 @@
     });
   });
 
-  // ---------- Workload slider ----------
+  // ---------- Workload ----------
+  // Total hours is editable; the slider scale follows it. In-class hours come from the slider,
+  // the rest of the week is studio work and research. The studio label text is editable too.
   const slider = $("#slider"), marks = $("#marks");
-  marks.innerHTML = Array.from({ length: TOTAL_HOURS + 1 }, (_, i) =>
-    `<div class="mark" style="left:${(i / TOTAL_HOURS) * 100}%"><i></i><span>${i}</span></div>`).join("");
+  let studioLabel = "studio work and research";
+  function markStep(total) { return total <= 20 ? 1 : total <= 40 ? 2 : 5; }
+  function renderMarks() {
+    const step = markStep(totalHours);
+    const values = [];
+    for (let i = 0; i <= totalHours; i += step) values.push(i);
+    if (values[values.length - 1] !== totalHours) values.push(totalHours);
+    marks.innerHTML = values.map((i) =>
+      `<div class="mark" data-v="${i}" style="left:${(i / totalHours) * 100}%"><i></i><span>${i}</span></div>`).join("");
+    slider.setAttribute("aria-valuemax", totalHours);
+  }
   function renderWorkload() {
-    const pct = (inClass / TOTAL_HOURS) * 100;
-    $("#trackFill").style.width = pct + "%";
-    $("#handle").style.left = `calc(8px + (100% - 16px) * ${inClass / TOTAL_HOURS})`;
-    $$(".mark", marks).forEach((m, i) => { m.classList.toggle("on", i <= inClass); m.classList.toggle("current", i === inClass); });
+    inClass = Math.min(inClass, totalHours);
+    const studio = totalHours - inClass;
+    const frac = totalHours ? inClass / totalHours : 0;
+    $("#trackFill").style.width = frac * 100 + "%";
+    $("#handle").style.left = `calc(8px + (100% - 16px) * ${frac})`;
+    $$(".mark", marks).forEach((m) => {
+      const v = +m.dataset.v;
+      m.classList.toggle("on", v <= inClass);
+      m.classList.toggle("current", v === inClass);
+    });
     const inB = $("#bracketIn"), outB = $("#bracketOut");
-    inB.hidden = inClass === 0; outB.hidden = inClass === TOTAL_HOURS;
-    inB.style.flex = `0 0 calc((100% - 2px) * ${inClass / TOTAL_HOURS})`;
+    inB.hidden = inClass === 0; outB.hidden = studio === 0;
+    inB.style.flex = studio === 0 ? "1 1 0" : `0 0 calc((100% - 2px) * ${frac})`;
     $("#inLabel").textContent = `${inClass}hrs in class`;
-    $("#outLabel").textContent = `${studioHours} hrs studio work and research`;
-    $("#weeklyTotal").textContent = `${inClass + studioHours} hrs`;
+    if (!$("#outLabel input")) $("#outLabel").textContent = `${studio} hrs ${studioLabel}`;
+    if (!$("#weeklyTotal input")) $("#weeklyTotal").textContent = `${totalHours} hrs`;
+    slider.setAttribute("aria-valuenow", inClass);
+    slider.setAttribute("aria-valuetext", `${inClass} hours in class, ${studio} hours ${studioLabel}`);
   }
   function valueFromPointer(x) {
     const r = $("#track").getBoundingClientRect();
-    return Math.max(0, Math.min(TOTAL_HOURS, Math.round(((x - r.left) / r.width) * TOTAL_HOURS)));
+    return Math.max(0, Math.min(totalHours, Math.round(((x - r.left) / r.width) * totalHours)));
   }
   slider.addEventListener("pointerdown", (e) => {
     slider.setPointerCapture(e.pointerId);
@@ -190,31 +208,60 @@
   slider.tabIndex = 0;
   slider.setAttribute("role", "slider");
   slider.setAttribute("aria-label", "Hours in class per week");
+  slider.setAttribute("aria-valuemin", 0);
   slider.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === "ArrowUp") inClass = Math.min(TOTAL_HOURS, inClass + 1);
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") inClass = Math.min(totalHours, inClass + 1);
     else if (e.key === "ArrowLeft" || e.key === "ArrowDown") inClass = Math.max(0, inClass - 1);
     else return;
     e.preventDefault(); renderWorkload();
   });
 
-  $("#editStudio").addEventListener("click", () => {
-    const label = $("#outLabel");
-    if ($(".studio-input", label)) return;
-    label.innerHTML = `<input class="studio-input" type="number" min="0" max="60" value="${studioHours}" aria-label="Studio hours per week"> hrs studio work and research`;
-    const inp = $(".studio-input", label);
+  // Inline edit helper: swaps an element's text for an input; Enter/blur saves, Esc cancels
+  function inlineEdit(host, { html, onSave }) {
+    if ($("input", host)) return;
+    host.innerHTML = html;
+    host.classList.add("is-editing");
+    const inp = $("input", host);
     inp.focus(); inp.select();
     let done = false;
-    const commit = (save) => {
+    const finish = (save) => {
       if (done) return; done = true;
-      const v = Math.round(Number(inp.value));
-      if (save && Number.isFinite(v)) studioHours = Math.max(0, Math.min(60, v));
+      host.classList.remove("is-editing");
+      if (save) onSave(inp.value);
+      host.innerHTML = "";
       renderWorkload();
     };
     inp.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") commit(true);
-      if (e.key === "Escape") { e.stopPropagation(); commit(false); }
+      if (e.key === "Enter") { e.preventDefault(); finish(true); }
+      if (e.key === "Escape") { e.stopPropagation(); finish(false); }
     });
-    inp.addEventListener("blur", () => commit(true));
+    inp.addEventListener("blur", () => finish(true));
+  }
+
+  // Click "16 hrs" to type the weekly total
+  const totalEl = $("#weeklyTotal");
+  function editTotal() {
+    inlineEdit(totalEl, {
+      html: `<span class="edit-field total-field"><input type="number" min="1" max="60" step="1" value="${totalHours}" aria-label="Total hours per week"><span>hrs</span></span>`,
+      onSave: (v) => {
+        const n = Math.round(Number(v));
+        if (Number.isFinite(n) && n >= 1) {
+          totalHours = Math.min(60, n);
+          renderMarks();
+        }
+      },
+    });
+  }
+  totalEl.addEventListener("click", editTotal);
+  totalEl.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target === totalEl) { e.preventDefault(); editTotal(); } });
+
+  // Pencil: rename the studio label
+  $("#editStudio").addEventListener("click", () => {
+    const studio = totalHours - inClass;
+    inlineEdit($("#outLabel"), {
+      html: `<span class="label-prefix">${studio} hrs</span><span class="edit-field label-field"><input type="text" maxlength="40" value="${esc(studioLabel)}" aria-label="Label for the remaining hours"></span>`,
+      onSave: (v) => { if (v.trim()) studioLabel = v.trim(); },
+    });
   });
 
   // ---------- Rubric upload ----------
@@ -620,6 +667,7 @@
   });
 
   // ---------- Init ----------
+  renderMarks();
   renderWorkload();
   renderWorks();
   renderTestimonials();
