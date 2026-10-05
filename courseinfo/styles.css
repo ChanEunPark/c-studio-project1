@@ -185,3 +185,26 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 2px;
   background: var(--stone-1); box-shadow: 0 2px 8px rgba(0, 0, 0, .15); font-weight: 500; white-space: nowrap;
 }
+
+/* ---------- Page header (sticky) ---------- */
+.page-header {
+  position: sticky; top: 0; z-index: 50; height: 86px; background: var(--stone-1);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 24px 16px;
+}
+.heading-left { display: flex; align-items: center; gap: 12px; padding: 6px 0; min-width: 0; white-space: nowrap; }
+.heading-left .h4 { overflow: hidden; text-overflow: ellipsis; }
+.heading-extra { display: flex; align-items: center; gap: 8px; flex: none; }
+a.btn { text-decoration: none; }
+.btn-more {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  background: var(--stone-1); border: 1px solid var(--stone-5); border-radius: 2px; box-shadow: 0 2px 0 rgba(0,0,0,.02);
+}
+.btn-more:hover { border-color: var(--primary-6); }
+.menu-anchor { position: relative; }
+.dropdown-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; min-width: 197px; padding: 4px 0;
+  background: var(--stone-1); border-radius: 8px; box-shadow: var(--shadow-popover); display: flex; flex-direction: column;
+}
+.dropdown-menu button { padding: 5px 12px; text-align: left; white-space: nowrap; }
+.dropdown-menu button:hover { background: #f1f7ff; font-weight: 500; }
+@media print { .page-header, .carousel-nav, #askBtn, #interestsBtn { display: none !important; } }

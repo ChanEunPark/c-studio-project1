@@ -7,9 +7,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Hanken+Grotesk:wght@400;500;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
+  <!-- Page header -->
+  <header class="page-header">
+    <div class="heading-left">
+      <p class="h4">Communication Design Studio: Theory and Practice</p>
+      <p class="body-r secondary">Last Update: 03/27/2026 04:56pm</p>
+    </div>
+    <div class="heading-extra">
+      <button class="btn btn-secondary" id="shareBtn"><img src="assets/icon-share.svg" alt="" width="14" height="14" />Share</button>
+      <a class="btn btn-primary" href="../student/"><img src="assets/icon-calendar.svg" alt="" width="14" height="14" />Go to my schedule</a>
+      <div class="menu-anchor">
+        <button class="btn-more" id="moreBtn" aria-label="More actions" aria-haspopup="menu" aria-expanded="false"><img src="assets/icon-more.svg" alt="" width="14" height="14" /></button>
+        <div class="dropdown-menu" id="moreMenu" role="menu" hidden>
+          <button role="menuitem" data-more="syllabus">Download Syllabus</button>
+          <button role="menuitem" data-more="print">Print this page</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
   <!-- Banner -->
   <div class="banner"><img src="assets/banner.jpg" alt="" /></div>
 
@@ -220,6 +239,6 @@
     <img src="assets/icon-check-circle.svg" alt="" width="16" height="16" /><p id="toastText"></p>
   </div>
 
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

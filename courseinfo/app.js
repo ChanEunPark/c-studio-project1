@@ -160,6 +160,25 @@
   // Files (sample prototype – no real files attached)
   $$("[data-file]").forEach((b) => b.addEventListener("click", () => toast(`${b.dataset.file} isn’t attached in this prototype.`)));
 
+  // ---------- Header ----------
+  $("#shareBtn").addEventListener("click", async () => {
+    const url = location.href.split("?")[0];
+    try { await navigator.clipboard.writeText(url); toast("Link copied. Share it with classmates."); }
+    catch { toast(`Copy this link to share: ${url}`); }
+  });
+  const moreBtn = $("#moreBtn"), moreMenu = $("#moreMenu");
+  moreBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    moreMenu.hidden = !moreMenu.hidden;
+    moreBtn.setAttribute("aria-expanded", String(!moreMenu.hidden));
+  });
+  document.addEventListener("click", () => { moreMenu.hidden = true; moreBtn.setAttribute("aria-expanded", "false"); });
+  moreMenu.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-more]"); if (!b) return;
+    if (b.dataset.more === "print") window.print();
+    else toast("Communication_Studio-Syllabus.pdf isn’t attached in this prototype.");
+  });
+
   // ---------- Init ----------
   renderTestimonials();
   renderSuggested();
